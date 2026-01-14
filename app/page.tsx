@@ -604,10 +604,12 @@ export default function Home() {
     setIsContactRunning(true);
     setContactLogs(["> ./send_email.sh"]);
 
+    const emailAddress = "l62557411@gmail.com";
+
     const steps = [
       { text: "> Initializing mail client...", delay: 800 },
       { text: "> Resolving recipient address...", delay: 1600 },
-      { text: "> 200 OK: Connection established", delay: 2400 },
+      { text: `> Target: ${emailAddress}`, delay: 2400 },
       { text: "> Opening default mail app...", delay: 3200 },
     ];
 
@@ -619,7 +621,7 @@ export default function Home() {
 
     setTimeout(() => {
       setIsContactRunning(false);
-      window.location.href = "mailto:l62557411@gmail.com";
+      window.location.href = `mailto:${emailAddress}?subject=Hello Developer&body=I saw your portfolio...`; 
     }, 4000);
   };
 
