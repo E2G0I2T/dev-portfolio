@@ -1,156 +1,960 @@
-import React from 'react';
-import { Terminal, Smartphone, FileCode, Mail } from 'lucide-react';
-import Link from 'next/link';
-import ProjectCard, { LogEntry } from '../components/ProjectCard';
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Terminal,
+  Smartphone,
+  FileCode,
+  Mail,
+  Code2,
+  Layers,
+  Layout,
+  Gamepad,
+  Copy,
+  Check,
+  Play,
+} from "lucide-react";
+import Link from "next/link";
+import ProjectCard, { LogEntry } from "../components/ProjectCard";
+
+interface ProjectData {
+  id: number;
+  type: "android" | "react";
+  filename: string;
+  title: string;
+  tags: string[];
+  videoSrc: string;
+  summary: string;
+  specs: string[];
+  logs: LogEntry[];
+}
+
+const PROJECTS: ProjectData[] = [
+  {
+    id: 0,
+    type: "android",
+    filename: "moji_jlpt.kt",
+    title: "MOJI - JLPT 단어장",
+    tags: ["Android", "Kotlin", "Jetpack Compose", "SQLite", "AdMob"],
+    videoSrc: "/videos/demo1.mp4",
+    summary:
+      "JLPT N1~N5 급수별 필수 단어를 효율적으로 암기할 수 있는 안드로이드 네이티브 앱입니다.",
+    specs: [
+      "외부 라이브러리 없이 Android 내장 SQLite를 직접 활용하여 최적화된 데이터 관리",
+      "학습 효율 극대화를 위한 '단어/뜻 가리기(Masking)' 및 필터링 기능 구현",
+      "하트 시스템이 적용된 서바이벌 방식의 퀴즈 모드로 게이미피케이션 요소 도입",
+      "Google AdMob 전면 광고 연동을 통한 인앱 수익화 모델 구축",
+    ],
+    logs: [
+      {
+        time: 0,
+        type: "info",
+        text: "D/App: onCreate // 앱 실행 및 DB Helper 인스턴스 초기화",
+      },
+      {
+        time: 0.6,
+        type: "success",
+        text: "I/SQLite: DB Opened // 데이터베이스 파일 로드",
+      },
+      {
+        time: 5.8,
+        type: "info",
+        text: "D/SQLite: Exec SQL // 암기 상태 변경 (id=1 -> Checked)",
+      },
+      {
+        time: 6.6,
+        type: "info",
+        text: "D/SQLite: Exec SQL // 암기 상태 변경 (id=2 -> Checked)",
+      },
+      {
+        time: 7,
+        type: "info",
+        text: "D/SQLite: Exec SQL // 암기 상태 변경 (id=3 -> Checked)",
+      },
+      {
+        time: 12,
+        type: "info",
+        text: 'D/Search: Input "의미" // 검색어 입력 감지 및 디바운싱',
+      },
+      {
+        time: 12.5,
+        type: "success",
+        text: 'D/SQLite: Raw Query // "SELECT * FROM words WHERE meaning LIKE ?" 실행',
+      },
+      {
+        time: 18,
+        type: "info",
+        text: "I/Filter: Select Level // 학습 난이도 변경 (N5 -> N4 테이블 로드)",
+      },
+      {
+        time: 21,
+        type: "info",
+        text: "I/Filter: Select Level // 학습 난이도 변경 (N4 -> N5 테이블 로드)",
+      },
+      {
+        time: 24.5,
+        type: "info",
+        text: 'I/Filter: Show "Known" // "아는 단어(Checked)" 필터링 쿼리 실행',
+      },
+      {
+        time: 26.5,
+        type: "info",
+        text: 'I/Filter: Show "Unknown" // "모르는 단어(Unchecked)" 필터링 쿼리 실행',
+      },
+      {
+        time: 29,
+        type: "info",
+        text: 'I/Filter: Show "All" // 필터 해제 및 전체 리스트 조회',
+      },
+      {
+        time: 30.5,
+        type: "info",
+        text: "D/UI: Toggle Meaning // 암기 모드: 단어 뜻 가리기(Visibility: Gone)",
+      },
+      {
+        time: 43.5,
+        type: "info",
+        text: "I/Nav: QuizFragment // 퀴즈 설정 화면으로 네비게이션 이동",
+      },
+      {
+        time: 46,
+        type: "info",
+        text: "I/Game: Start Mode // N5 단어 맞추기 게임 시작 (Life: 3)",
+      },
+      {
+        time: 49,
+        type: "success",
+        text: 'D/Logic: Answer Correct // Q1 정답 "年" 확인',
+      },
+      {
+        time: 52.5,
+        type: "warning",
+        text: "W/Logic: Answer Wrong // Q2 오답 제출 -> 하트 감소 (Life: 2)",
+      },
+      {
+        time: 60.5,
+        type: "info",
+        text: "D/Game: Next Question // 다음 문제 로드 (Mode: Word)",
+      },
+      {
+        time: 69.5,
+        type: "error",
+        text: "I/Game: GameOver // 라이프 소진으로 게임 종료 트리거",
+      },
+      {
+        time: 70.5,
+        type: "info",
+        text: "I/AdMob: Request Ad // 보상형/전면 광고 요청",
+      },
+      {
+        time: 71,
+        type: "success",
+        text: "I/AdMob: Show Ad // 구글 애드몹 광고 오버레이 출력",
+      },
+      {
+        time: 72.5,
+        type: "info",
+        text: "I/Game: Reward User // 광고 시청 보상 지급 (Life +1)",
+      },
+      {
+        time: 74.5,
+        type: "info",
+        text: "I/Nav: QuizFragment // 퀴즈 메인 화면으로 복귀",
+      },
+      {
+        time: 75.5,
+        type: "info",
+        text: "I/App: Session End // --- 영상 종료 ---",
+      },
+    ],
+  },
+  {
+    id: 1,
+    type: "react",
+    filename: "todo_manager.tsx",
+    title: "스마트 투두 & 체크리스트",
+    tags: ["React Native", "TypeScript", "Redux Toolkit", "AsyncStorage"],
+    videoSrc: "/videos/demo2.mp4",
+    summary:
+      "체계적인 일정 관리와 체크리스트 작성을 지원하는 크로스 플랫폼 생산성 앱입니다.",
+    specs: [
+      "React Native 기반으로 개발하여 iOS/Android 동시 지원 및 다크 모드 UI 적용",
+      "Redux Toolkit을 활용한 '할 일'과 '체크리스트' 탭의 전역 상태 관리",
+      "날짜/시간 피커를 통한 상세 일정 등록 및 상태별(To-do/Done) 필터링 구현",
+      "AsyncStorage를 활용한 데이터 로컬 캐싱 및 그룹형 체크리스트 기능",
+    ],
+    logs: [
+      {
+        time: 0,
+        type: "info",
+        text: "[Metro] Bundle Loaded // 앱 초기 구동 및 번들 로딩 완료",
+      },
+      {
+        time: 4.2,
+        type: "info",
+        text: "[UI] Press FAB // 할 일 추가 모달 열기",
+      },
+      {
+        time: 10,
+        type: "success",
+        text: "[Redux] ADD_TODO // 새로운 일정 스토어에 추가 (ID: 1)",
+      },
+      {
+        time: 10.5,
+        type: "success",
+        text: "[Storage] Save Success // 로컬 저장소 동기화",
+      },
+      {
+        time: 20,
+        type: "success",
+        text: "[Redux] ADD_TODO // 두 번째 일정 스토어에 추가 (ID: 2)",
+      },
+      {
+        time: 23,
+        type: "info",
+        text: '[Touch] Checkbox // "Meeting" 항목 완료 처리 (Status: Done)',
+      },
+      {
+        time: 24,
+        type: "info",
+        text: '[Filter] Tab: "To-do" // 미완료 일정만 보기 필터 적용',
+      },
+      {
+        time: 25.5,
+        type: "info",
+        text: '[Filter] Tab: "Done" // 완료된 일정만 보기 필터 적용',
+      },
+      {
+        time: 27,
+        type: "info",
+        text: '[Filter] Tab: "All" // 전체 일정 보기 필터 적용',
+      },
+      {
+        time: 29,
+        type: "info",
+        text: '[UI] Edit Item // "Hotel reservation" 수정 모드 진입',
+      },
+      {
+        time: 36.5,
+        type: "success",
+        text: "[Redux] UPDATE_TODO // 일정 정보 업데이트 완료",
+      },
+      {
+        time: 39.5,
+        type: "success",
+        text: "[Redux] DELETE_TODO // 일정 정보 삭제 (ID: 1)",
+      },
+      {
+        time: 40.5,
+        type: "success",
+        text: "[Redux] DELETE_TODO // 일정 정보 삭제 (ID: 2)",
+      },
+      {
+        time: 41.5,
+        type: "info",
+        text: "[Nav] Tab: CheckList // 하단 탭 전환 (To-do -> Checklist)",
+      },
+      {
+        time: 43.5,
+        type: "info",
+        text: "[UI] Press FAB // 새 체크리스트 그룹 생성 모달 열기",
+      },
+      {
+        time: 51.5,
+        type: "success",
+        text: "[DB] Create List // 새 체크리스트 그룹 생성 완료",
+      },
+      {
+        time: 53.5,
+        type: "info",
+        text: '[Nav] Push Detail // "Shopping list" 상세 화면 진입',
+      },
+      {
+        time: 63.5,
+        type: "info",
+        text: '[List] Add Item // 체크리스트 항목 "Keyboard"',
+      },
+      {
+        time: 69.5,
+        type: "info",
+        text: '[List] Add Item // 체크리스트 항목 "Ramen"',
+      },
+      {
+        time: 75.5,
+        type: "info",
+        text: '[List] Add Item // 체크리스트 항목 "Brush"',
+      },
+      {
+        time: 80,
+        type: "success",
+        text: '[Redux] DELETE_ITEM // 체크리스트 항목 삭제 "keyboard"',
+      },
+      {
+        time: 80.5,
+        type: "success",
+        text: '[Redux] DELETE_ITEM // 체크리스트 항목 삭제 "Ramen"',
+      },
+      {
+        time: 82.5,
+        type: "info",
+        text: '[UI] Edit Item // "Brush" 항목 수정 모드 진입',
+      },
+      {
+        time: 90,
+        type: "info",
+        text: '[List] Update Item // "Brush" -> "Coffee cup" 내용 수정',
+      },
+      {
+        time: 95,
+        type: "info",
+        text: "[UI] Edit List Name // 상단 리스트 이름 수정 모드 진입",
+      },
+      {
+        time: 99,
+        type: "success",
+        text: '[DB] Rename List // 리스트 이름 변경 ("Shopping list 2")',
+      },
+      {
+        time: 101,
+        type: "info",
+        text: "I/App: Session End // --- 영상 종료 ---",
+      },
+    ],
+  },
+  {
+    id: 2,
+    type: "react",
+    filename: "halo_music.tsx",
+    title: "Halo - 일본 음악 아카이브",
+    tags: ["React Native", "Firebase", "Google Auth", "Context API"],
+    videoSrc: "/videos/demo3.mp4",
+    summary:
+      "개인 취향을 분석하여 일본 음악을 추천하고 기록하는 아카이빙 서비스입니다.",
+    specs: [
+      "Firebase Auth 연동으로 안전한 Google 소셜 로그인 구현",
+      "Firestore 기반 평점/즐겨찾기 데이터 실시간 동기화",
+      "Context API를 활용한 끊김 없는 다크 모드 테마 전환",
+      "복합 필터링(별점순/랜덤) 및 실시간 검색 알고리즘 최적화",
+    ],
+    logs: [
+      {
+        time: 0,
+        type: "info",
+        text: "[App] Splash Mounted // 앱 초기 실행 및 리소스 로딩",
+      },
+      {
+        time: 2.5,
+        type: "warning",
+        text: "[Auth] Check Session // 사용자 로그인 세션 확인 (null -> 로그인 필요)",
+      },
+      {
+        time: 3.5,
+        type: "success",
+        text: "[Auth] Google Sign-In // 구글 소셜 로그인 요청",
+      },
+      {
+        time: 8,
+        type: "success",
+        text: "[Auth] Google Sign-In // 구글 소셜 로그인 토큰 획득 성공",
+      },
+      {
+        time: 9,
+        type: "info",
+        text: "[Firestore] Fetch Songs // 파이어베이스 클라우드 스토어 데이터 동기화",
+      },
+      {
+        time: 11,
+        type: "success",
+        text: "[Data] Load Complete // 곡 데이터 로드 및 리스트 렌더링",
+      },
+      {
+        time: 17,
+        type: "success",
+        text: "[Data] Data Update // 별점 데이터 업데이트 확인",
+      },
+      {
+        time: 26.5,
+        type: "info",
+        text: '[Search] Input: "겉모습" // "겉모습" 키워드 검색',
+      },
+      {
+        time: 26.5,
+        type: "info",
+        text: "[List] Filter Data // 검색 결과 리스트 필터링 (1건)",
+      },
+      {
+        time: 35.5,
+        type: "success",
+        text: "[Data] Data Update // 즐겨찾기 데이터 업데이트 확인",
+      },
+      {
+        time: 36.5,
+        type: "info",
+        text: "[Nav] Load Complete // 즐겨찾기 탭 이동 및 렌더링 완료",
+      },
+      {
+        time: 40.5,
+        type: "info",
+        text: '[Nav] Push Detail // "겉모습" 상세 화면 이동',
+      },
+      {
+        time: 41.5,
+        type: "success",
+        text: '[API] Youtube Load // "겉모습" 유튜브 영상 로드 및 재생',
+      },
+      {
+        time: 44,
+        type: "success",
+        text: "[Data] Data Update // 별점 데이터 업데이트 확인",
+      },
+      {
+        time: 50,
+        type: "info",
+        text: '[Filter] Mode: Rated // "별점 있음"만 모아보기 필터 활성화',
+      },
+      {
+        time: 51,
+        type: "info",
+        text: '[Filter] Mode: UnRated // "별점 없음"만 모아보기 필터 활성화',
+      },
+      {
+        time: 59,
+        type: "success",
+        text: '[Data] Data Update // 별점 데이터 업데이트 확인 "올 나이트 라디오"',
+      },
+      {
+        time: 63,
+        type: "info",
+        text: "[Firestore] Tab: refresh // 새로고침 버튼 클릭, Firebase에서 별점 계산...",
+      },
+      {
+        time: 66.5,
+        type: "success",
+        text: "[Firestore] refresh done // 별점 계산 완료",
+      },
+      {
+        time: 66.5,
+        type: "success",
+        text: "[UI] UI refresh // UI 새로고침 완료, 리스트 재정렬",
+      },
+      {
+        time: 78.5,
+        type: "info",
+        text: "[Nav] Load Complete // 설정 탭 이동 및 렌더링 완료",
+      },
+      {
+        time: 78.5,
+        type: "info",
+        text: "[API] Check Server // 서버 연결 상태 확인",
+      },
+      {
+        time: 83.5,
+        type: "info",
+        text: "[Theme] Dark -> Light // 전역 테마 컨텍스트 변경 (다크 -> 라이트 모드)",
+      },
+      {
+        time: 90,
+        type: "warning",
+        text: "[Auth] Sign Out // 로그아웃 버튼 클릭 (확인 팝업)",
+      },
+      {
+        time: 91,
+        type: "info",
+        text: "[Auth] Clear Session // 사용자 세션 초기화",
+      },
+      {
+        time: 92,
+        type: "success",
+        text: "[Nav] Reset Stack // 네비게이션 스택 초기화 및 로그인 화면 복귀",
+      },
+      {
+        time: 92.5,
+        type: "info",
+        text: "I/App: Session End // --- 영상 종료 ---",
+      },
+    ],
+  },
+  {
+    id: 3,
+    type: "android",
+    filename: "my_gallag.kt",
+    title: "My Gallag - 슈팅 게임",
+    tags: ["Android", "Kotlin", "Canvas API", "Game Dev", "OOP"],
+    videoSrc: "/videos/demo4.mp4",
+    summary:
+      "추억의 갤러그를 현대적인 감각으로 재해석한 안드로이드 네이티브 슈팅 게임입니다.",
+    specs: [
+      "Android SurfaceView와 Canvas API를 활용하여 고성능 2D 그래픽 렌더링 구현",
+      "객체 지향 프로그래밍(OOP) 설계를 통해 비행체, 적, 아이템 클래스 모듈화",
+      "터치 이벤트를 활용한 부드러운 기체 조작감 및 실시간 충돌 감지 로직",
+      "아이템 획득 시 무기 강화(Blue Beam) 및 스테이지별 적 패턴 알고리즘 적용",
+    ],
+    logs: [
+      {
+        time: 0,
+        type: "info",
+        text: "D/GameSurface: SurfaceCreated // 게임 루프 스레드 시작",
+      },
+      {
+        time: 2,
+        type: "info",
+        text: "I/Input: Select Character // 플레이어 기체 선택 (Index: 4 - Yellow)",
+      },
+      {
+        time: 4,
+        type: "success",
+        text: "D/GameManager: Start Game // 레벨 1 데이터 로드 및 적 객체 초기화",
+      },
+      {
+        time: 11,
+        type: "info",
+        text: "D/Spawner: Spawn Wave // 적 비행체 패턴 생성 (Formation: Grid)",
+      },
+      {
+        time: 12,
+        type: "info",
+        text: "I/Player: Fire Laser // 기본 무기 발사 이벤트 감지",
+      },
+      {
+        time: 18,
+        type: "info",
+        text: "D/Item: Spawn PowerUp // 강화 아이템(Lightning) 드롭",
+      },
+      {
+        time: 19,
+        type: "success",
+        text: "I/Player: Item Collected // 아이템 획득 -> 무기 레벨업 (Blue Beam Mode)",
+      },
+      {
+        time: 30,
+        type: "info",
+        text: "D/GameLoop: Garbage Collection // 화면 밖으로 나간 객체 메모리 해제",
+      },
+      {
+        time: 40,
+        type: "warning",
+        text: "W/Enemy: Pattern Change // 적 공격 속도 1.5배 증가",
+      },
+      {
+        time: 50,
+        type: "error",
+        text: "W/Collision: Player Hit // 충돌 감지! (HP: 0)",
+      },
+      {
+        time: 54,
+        type: "info",
+        text: "I/UI: Show GameOver // 게임 오버 팝업 출력 (Score: 22)",
+      },
+      {
+        time: 56,
+        type: "info",
+        text: "D/GameManager: Session End // 게임 종료",
+      },
+    ],
+  },
+];
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState(0);
+  const [typedCommand, setTypedCommand] = useState("");
+  const [showResult, setShowResult] = useState(false);
+
+  const [isCopied, setIsCopied] = useState(false);
+
+  const [contactLogs, setContactLogs] = useState<string[]>([]);
+  const [isContactRunning, setIsContactRunning] = useState(false);
+
+  const handleCopy = () => {
+    const textToCopy = `
+{
+  "name": "Dev.Dotori",
+  "role": "Mobile & Full Stack Developer",
+  "skills": {
+    "languages": ["Kotlin", "Java", "TypeScript", "JavaScript", "Python", "C#", "HTML/CSS"],
+    "mobile": ["React Native", "Expo", "Flutter", "Android SDK"],
+    "web_frontend": ["React", "Next.js", "Tailwind CSS"],
+    "backend_db": ["Spring Boot", "MSSQL", "MongoDB", "SQLite"],
+    "tools_infra": ["Git", "Firebase", "Docker", "Google Play Console", "Figma", "Android Studio"]
+  }
+}
+    `.trim();
+    navigator.clipboard.writeText(textToCopy);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  // Hero Typing Effect
+  useEffect(() => {
+    const fullCommand = "whoami";
+    let i = 0;
+    const typingInterval = setInterval(() => {
+      if (i < fullCommand.length) {
+        setTypedCommand(fullCommand.slice(0, i + 1));
+        i++;
+      } else {
+        clearInterval(typingInterval);
+        setTimeout(() => setShowResult(true), 500);
+      }
+    }, 150);
+    return () => clearInterval(typingInterval);
+  }, []);
+
+  const handleContactExecute = () => {
+    if (isContactRunning) return;
+    setIsContactRunning(true);
+    setContactLogs(["> ./send_email.sh"]);
+
+    const steps = [
+      { text: "> Initializing mail client...", delay: 800 },
+      { text: "> Resolving recipient address...", delay: 1600 },
+      { text: "> 200 OK: Connection established", delay: 2400 },
+      { text: "> Opening default mail app...", delay: 3200 },
+    ];
+
+    steps.forEach(({ text, delay }) => {
+      setTimeout(() => {
+        setContactLogs((prev) => [...prev, text]);
+      }, delay);
+    });
+
+    setTimeout(() => {
+      setIsContactRunning(false);
+      window.location.href = "mailto:l62557411@gmail.com";
+    }, 4000);
+  };
+
+  const containerClass = "w-full max-w-[1400px] mx-auto px-6 lg:px-12";
+
   return (
-    <div className="min-h-screen flex flex-col font-mono selection:bg-green-900 selection:text-green-100">
-      
-      {/* 1. Header: VS Code 탭 스타일 */}
+    <div className="min-h-screen bg-slate-950 text-slate-200 selection:bg-blue-500/30">
       <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur border-b border-slate-800">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-1 overflow-x-auto">
-          {/* Home Tab */}
+        <div
+          className={`${containerClass} h-14 flex items-center gap-1 overflow-x-auto scrollbar-hide`}
+        >
           <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-blue-400 border-t-2 border-blue-500 text-sm min-w-fit cursor-default">
             <Terminal size={14} />
             <span>~/portfolio</span>
           </div>
-          
-          {/* Menu Tabs (Link 컴포넌트로 변경) */}
-          <Link href="#about" className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-slate-100 hover:bg-slate-900 transition-colors text-sm min-w-fit">
+
+          <Link
+            href="#about"
+            className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-slate-100 hover:bg-slate-900 transition-colors text-sm min-w-fit"
+          >
             <FileCode size={14} className="text-yellow-400" />
             <span>_about.json</span>
           </Link>
-          <Link href="#projects" className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-slate-100 hover:bg-slate-900 transition-colors text-sm min-w-fit">
-            <Smartphone size={14} className="text-green-400" />
+          <Link
+            href="#projects"
+            className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-slate-100 hover:bg-slate-900 transition-colors text-sm min-w-fit"
+          >
+            <Layers size={14} className="text-green-400" />
             <span>projects.tsx</span>
           </Link>
-          <Link href="#contact" className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-slate-100 hover:bg-slate-900 transition-colors text-sm min-w-fit">
+          <Link
+            href="#contact"
+            className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-slate-100 hover:bg-slate-900 transition-colors text-sm min-w-fit"
+          >
             <Mail size={14} className="text-purple-400" />
             <span>contact.sh</span>
           </Link>
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-6 py-20 space-y-32">
-        
-        {/* 2. Hero Section: 터미널 타이핑 효과 */}
-        <section className="space-y-6">
+      <main className="flex-1 w-full py-20 space-y-32">
+        <section className={containerClass}>
           <div className="p-2 bg-slate-900 rounded-t-lg border border-slate-800 w-fit flex gap-2">
             <div className="w-3 h-3 rounded-full bg-red-500" />
             <div className="w-3 h-3 rounded-full bg-yellow-500" />
             <div className="w-3 h-3 rounded-full bg-green-500" />
           </div>
-          <div className="border-l-2 border-slate-800 pl-6 py-2 space-y-4">
-            <div className="text-green-400 text-lg sm:text-2xl">
+          <div className="border-l-2 border-slate-800 pl-6 py-2 space-y-4 min-h-[200px]">
+            <div className="text-green-400 text-lg sm:text-2xl font-mono">
               <span className="text-blue-400 mr-2">➜</span>
               <span className="text-purple-400 mr-2">~</span>
-              whoami
+              {typedCommand}
+              <span className="animate-pulse inline-block w-2.5 h-5 bg-green-400 ml-1 align-middle"></span>
             </div>
-            <h1 className="text-4xl sm:text-6xl font-bold text-slate-100 tracking-tight">
-              Hello, I&apos;m <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">Dev.Dotori</span>
-            </h1>
-            <p className="text-xl text-slate-400 max-w-2xl leading-relaxed">
-              &gt; Mobile App Developer specializing in <span className="text-cyan-400">React Native</span> &amp; <span className="text-orange-400">Android</span>.
-              <br/>
-              &gt; Building bridges between code and user experience.
-            </p>
+
+            <div
+              className={`transition-opacity duration-1000 ${
+                showResult ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <h1 className="text-4xl sm:text-6xl font-bold text-slate-100 tracking-tight mt-4">
+                Hello, I&apos;m{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">
+                  Lee Ji Hyung
+                </span>
+              </h1>
+              <p className="text-xl text-slate-400 max-w-3xl leading-relaxed mt-4">
+                &gt; Mobile App Developer specializing in{" "}
+                <span className="whitespace-nowrap">
+                  <span className="text-cyan-400">React Native</span> &amp;{" "}
+                  <span className="text-orange-400">Android</span>.
+                </span>
+                <br />
+                &gt; Building bridges between code and user experience.
+              </p>
+            </div>
           </div>
         </section>
 
-        {/* 3. About Section: JSON Config 스타일 */}
-        <section id="about" className="pt-10">
-          <h2 className="text-2xl font-bold mb-8 flex items-center gap-2 text-yellow-400">
-            <span className="text-slate-600">01.</span> _about.json
-          </h2>
-          <div className="bg-slate-900 rounded-xl p-6 border border-slate-800 shadow-2xl overflow-x-auto">
-            {/* JSON 코드 블록: 특수문자 에러 방지를 위해 &quot; 사용 */}
-            <pre className="text-sm sm:text-base leading-relaxed font-mono">
-              <code className="block">
-                <span className="text-yellow-600">{`{`}</span>
-                <br />
-                &nbsp;&nbsp;<span className="text-red-400">&quot;name&quot;</span>: <span className="text-green-400">&quot;Your Name&quot;</span>,
-                <br />
-                &nbsp;&nbsp;<span className="text-red-400">&quot;role&quot;</span>: <span className="text-green-400">&quot;Mobile Developer&quot;</span>,
-                <br />
-                &nbsp;&nbsp;<span className="text-red-400">&quot;skills&quot;</span>: <span className="text-yellow-600">{`{`}</span>
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-red-400">&quot;core&quot;</span>: [<span className="text-green-400">&quot;React Native&quot;</span>, <span className="text-green-400">&quot;Kotlin&quot;</span>, <span className="text-green-400">&quot;TypeScript&quot;</span>],
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-red-400">&quot;frameworks&quot;</span>: [<span className="text-green-400">&quot;Expo&quot;</span>, <span className="text-green-400">&quot;Next.js&quot;</span>, <span className="text-green-400">&quot;Firebase&quot;</span>],
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-red-400">&quot;tools&quot;</span>: [<span className="text-green-400">&quot;Git&quot;</span>, <span className="text-green-400">&quot;Android Studio&quot;</span>, <span className="text-green-400">&quot;Figma&quot;</span>]
-                <br />
-                &nbsp;&nbsp;<span className="text-yellow-600">{`}`}</span>
-                <br />
-                <span className="text-yellow-600">{`}`}</span>
-              </code>
-            </pre>
+        <section id="about" className={`${containerClass} pt-10`}>
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold flex items-center gap-2 text-yellow-400">
+              <span className="text-slate-600">01.</span> _about.json
+            </h2>
+          </div>
+
+          <div className="relative bg-[#1e1e1e] rounded-xl border border-[#333] shadow-2xl overflow-hidden font-mono text-sm sm:text-base group">
+            <div className="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-[#333]">
+              <div className="flex items-center gap-2 text-yellow-400 text-xs">
+                <FileCode size={14} />
+                <span>_about.json</span>
+              </div>
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-2 px-2 py-1 hover:bg-[#333] rounded text-slate-400 hover:text-white transition-colors"
+                title="Copy to clipboard"
+              >
+                {isCopied ? (
+                  <Check size={14} className="text-green-400" />
+                ) : (
+                  <Copy size={14} />
+                )}
+              </button>
+            </div>
+
+            <div className="flex overflow-x-auto">
+              <div className="flex flex-col items-end px-3 py-4 text-[#858585] select-none bg-[#1e1e1e] border-r border-[#333] min-w-[3rem]">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+                <span>6</span>
+                <span>7</span>
+                <span>8</span>
+                <span>9</span>
+                <span>10</span>
+                <span>11</span>
+                <span>12</span>
+                <span>13</span>
+              </div>
+
+              <div className="flex-1 p-4 text-[#d4d4d4]">
+                <div className="block">
+                  <span className="text-yellow-400">{`{`}</span>
+                </div>
+                <div className="block pl-4">
+                  <span className="text-sky-300">&quot;name&quot;</span>:{" "}
+                  <span className="text-orange-300">
+                    &quot;Lee Ji Hyung&quot;
+                  </span>
+                  ,
+                </div>
+                <div className="block pl-4">
+                  <span className="text-sky-300">&quot;role&quot;</span>:{" "}
+                  <span className="text-orange-300">
+                    &quot;Mobile & Full Stack Developer&quot;
+                  </span>
+                  ,
+                </div>
+
+                <div className="block pl-4">
+                  <span className="text-sky-300">&quot;skills&quot;</span>:{" "}
+                  <span className="text-yellow-400">{`{`}</span>
+                </div>
+
+                <div className="block pl-8">
+                  <span className="text-sky-300">&quot;languages&quot;</span>: [
+                  <span className="text-orange-300">&quot;Kotlin&quot;</span>,{" "}
+                  <span className="text-orange-300">&quot;Java&quot;</span>,{" "}
+                  <span className="text-orange-300">
+                    &quot;TypeScript&quot;
+                  </span>
+                  ,{" "}
+                  <span className="text-orange-300">
+                    &quot;JavaScript&quot;
+                  </span>
+                  , <span className="text-orange-300">&quot;Python&quot;</span>,{" "}
+                  <span className="text-orange-300">&quot;C#&quot;</span>,{" "}
+                  <span className="text-orange-300">&quot;HTML/CSS&quot;</span>
+                  ],
+                </div>
+
+                <div className="block pl-8">
+                  <span className="text-sky-300">&quot;mobile&quot;</span>: [
+                  <span className="text-orange-300">
+                    &quot;React Native&quot;
+                  </span>
+                  , <span className="text-orange-300">&quot;Expo&quot;</span>,{" "}
+                  <span className="text-orange-300">&quot;Flutter&quot;</span>,{" "}
+                  <span className="text-orange-300">
+                    &quot;Android SDK&quot;
+                  </span>
+                  ],
+                </div>
+
+                <div className="block pl-8">
+                  <span className="text-sky-300">&quot;web_frontend&quot;</span>
+                  : [<span className="text-orange-300">&quot;React&quot;</span>,{" "}
+                  <span className="text-orange-300">&quot;Next.js&quot;</span>,{" "}
+                  <span className="text-orange-300">
+                    &quot;Tailwind CSS&quot;
+                  </span>
+                  ],
+                </div>
+
+                <div className="block pl-8">
+                  <span className="text-sky-300">&quot;backend_db&quot;</span>:
+                  [
+                  <span className="text-orange-300">
+                    &quot;Spring Boot&quot;
+                  </span>
+                  , <span className="text-orange-300">&quot;MSSQL&quot;</span>,{" "}
+                  <span className="text-orange-300">&quot;MongoDB&quot;</span>,{" "}
+                  <span className="text-orange-300">&quot;SQLite&quot;</span>],
+                </div>
+
+                <div className="block pl-8">
+                  <span className="text-sky-300">&quot;tools_infra&quot;</span>:
+                  [<span className="text-orange-300">&quot;Git&quot;</span>,{" "}
+                  <span className="text-orange-300">&quot;Firebase&quot;</span>,{" "}
+                  <span className="text-orange-300">&quot;Docker&quot;</span>,{" "}
+                  <span className="text-orange-300">
+                    &quot;Google Play Console&quot;
+                  </span>
+                  , <span className="text-orange-300">&quot;Figma&quot;</span>,{" "}
+                  <span className="text-orange-300">
+                    &quot;Android Studio&quot;
+                  </span>
+                  ]
+                </div>
+
+                <div className="block pl-4">
+                  <span className="text-yellow-400">{`}`}</span>
+                </div>
+
+                <div className="block">
+                  <span className="text-yellow-400">{`}`}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* 4. Projects Section: 실제 컴포넌트 사용 */}
-        <section id="projects" className="pt-20">
-          <h2 className="text-2xl font-bold mb-12 flex items-center gap-2 text-green-400">
-            <span className="text-slate-600">02.</span> projects.tsx
-          </h2>
+        <section id="projects" className="py-24 w-full">
+          <div className={containerClass}>
+            <div className="mb-12 border-b border-gray-800 pb-2">
+              <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-4">
+                <h2 className="text-2xl font-bold text-green-400 flex items-center gap-2">
+                  <span className="text-slate-600">02.</span> projects.tsx
+                </h2>
+              </div>
 
-          <div className="space-y-32">
-            
-            {/* 프로젝트 1: 일본어 학습 앱 예시 */}
-            <ProjectCard
-              title="JLPT 단어 학습 앱"
-              description="사용자의 학습 패턴을 분석하여 취약한 단어를 반복 노출하는 알고리즘을 적용했습니다. Room DB를 활용한 로컬 데이터 캐싱으로 오프라인 모드를 지원하며, UI/UX는 Jetpack Compose로 구현하여 네이티브 성능을 극대화했습니다."
-              tags={["Android", "Kotlin", "Jetpack Compose", "RoomDB"]}
-              // videoSrc="/videos/demo1.mp4" (나중에 public 폴더에 영상 넣고 주석 해제하세요)
-              logs={[
-                { time: 0, type: 'info', text: 'Application process started (PID: 1452)' },
-                { time: 1, type: 'info', text: 'Initializing Room Database...' },
-                { time: 1.5, type: 'success', text: 'Database connected successfully.' },
-                { time: 2.5, type: 'info', text: 'Loading vocabulary list from local storage' },
-                { time: 3, type: 'success', text: 'Loaded 2,500 words in 45ms' },
-                { time: 5, type: 'warning', text: 'Network unreachable. Switching to OFFLINE mode.' },
-                { time: 7, type: 'info', text: 'User interaction: Quiz Started' },
-              ]}
-            />
+              <div className="flex space-x-1 overflow-x-auto scrollbar-hide">
+                {PROJECTS.map((project, index) => {
+                  const isActive = activeTab === index;
+                  let Icon = Code2;
+                  if (index === 0) Icon = Smartphone;
+                  if (index === 1) Icon = Layout;
+                  if (index === 3) Icon = Gamepad;
 
-            {/* 프로젝트 2: 리액트 네이티브 앱 예시 */}
-            <ProjectCard
-              title="Japanese Songs Playlist"
-              description="YouTube Data API를 활용하여 일본 음악을 수집하고 추천하는 앱입니다. React Native와 TypeScript를 사용하여 크로스 플랫폼을 지원하며, Firebase Analytics를 연동하여 사용자 이탈률을 15% 개선했습니다."
-              tags={["React Native", "TypeScript", "Redux", "Firebase"]}
-              // videoSrc="/videos/demo2.mp4" 
-              logs={[
-                { time: 0, type: 'info', text: 'Starting Metro Bundler on port 8081...' },
-                { time: 1, type: 'success', text: 'Bundle 100% loaded.' },
-                { time: 2, type: 'info', text: 'Fetching video data from YouTube API...' },
-                { time: 4, type: 'success', text: 'Received 50 items. Status: 200 OK' },
-                { time: 5, type: 'info', text: 'Rendering PlaylistComponent...' },
-                { time: 7, type: 'info', text: 'Navigation: -> DetailScreen' },
-              ]}
-            />
+                  return (
+                    <button
+                      key={project.id}
+                      onClick={() => setActiveTab(index)}
+                      className={`
+                        flex items-center gap-2 px-6 py-3 text-sm font-mono border-t-2 transition-all duration-200 rounded-t-lg
+                        ${
+                          isActive
+                            ? "border-blue-500 bg-slate-900 text-blue-400"
+                            : "border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-900/50"
+                        }
+                      `}
+                    >
+                      <Icon size={16} />
+                      {project.filename}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
+            <div className="relative min-h-[600px]">
+              <div
+                key={activeTab}
+                className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards"
+              >
+                <ProjectCard
+                  title={PROJECTS[activeTab].title}
+                  summary={PROJECTS[activeTab].summary}
+                  specs={PROJECTS[activeTab].specs}
+                  tags={PROJECTS[activeTab].tags}
+                  videoSrc={PROJECTS[activeTab].videoSrc}
+                  logs={PROJECTS[activeTab].logs}
+                  projectType={PROJECTS[activeTab].type}
+                />
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* 5. Footer: Shell Prompt */}
-        <footer id="contact" className="pb-20 pt-10">
-           <h2 className="text-2xl font-bold mb-8 flex items-center gap-2 text-purple-400">
+        <footer id="contact" className={`${containerClass} pb-20 pt-10`}>
+          <h2 className="text-2xl font-bold mb-8 flex items-center gap-2 text-purple-400">
             <span className="text-slate-600">03.</span> contact.sh
           </h2>
-          <div className="border-t-2 border-slate-800 pt-8">
-            <p className="mb-4 text-lg">
-              <span className="text-green-400">user@portfolio:~$</span> ./send_email.sh
-            </p>
-            <a href="mailto:your-email@example.com" className="inline-block px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 transition-colors">
-              Execute: Send Email
-            </a>
-            <p className="mt-12 text-slate-600 text-sm">
-              &copy; 2025 Dev Portfolio. Process finished with exit code 0.
+
+          <div className="bg-slate-900 rounded-lg border border-slate-800 p-6 shadow-lg font-mono text-sm">
+            <div className="flex items-center gap-2 mb-4 text-slate-500 text-xs">
+              <Terminal size={14} />
+              <span>bash — 80x24</span>
+            </div>
+
+            <div className="space-y-2 mb-6 min-h-[100px]">
+              <div className="text-slate-300">
+                <span className="text-green-400">user@portfolio:~$</span>
+                {contactLogs.length > 0 ? " ./send_email.sh" : ""}
+                {contactLogs.length === 0 && (
+                  <span className="animate-pulse inline-block w-2 h-4 bg-slate-500 ml-1 align-middle"></span>
+                )}
+              </div>
+
+              {contactLogs.map((log, index) => (
+                <div
+                  key={index}
+                  className="text-slate-400 animate-in fade-in slide-in-from-left-1 duration-300"
+                >
+                  {log.startsWith(">") ? log : `> ${log}`}
+                </div>
+              ))}
+
+              {isContactRunning && (
+                <div className="text-slate-300">
+                  <span className="animate-pulse inline-block w-2 h-4 bg-slate-500 align-middle"></span>
+                </div>
+              )}
+            </div>
+
+            {!isContactRunning && (
+              <button
+                onClick={handleContactExecute}
+                className="flex items-center gap-2 px-5 py-2.5 bg-purple-900/30 hover:bg-purple-900/50 text-purple-300 border border-purple-500/30 hover:border-purple-500 rounded transition-all group"
+              >
+                <Play
+                  size={16}
+                  className="group-hover:fill-purple-300 transition-colors"
+                />
+                <span>Execute: Send Email</span>
+              </button>
+            )}
+
+            <p className="mt-8 text-slate-600 text-xs border-t border-slate-800 pt-4">
+              &copy; 2026 Dev Portfolio. Process finished with exit code 0.
             </p>
           </div>
         </footer>
-
       </main>
     </div>
   );
