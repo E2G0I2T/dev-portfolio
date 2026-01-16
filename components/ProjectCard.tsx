@@ -74,7 +74,6 @@ export default function ProjectCard({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start group">
       
-      {/* 1. Left Column: Phone Frame & Video Player */}
       <div className="relative mx-auto lg:mx-0 flex flex-col items-center">
         <div className="relative border-gray-800 bg-gray-900 border-[12px] rounded-[3rem] h-[600px] w-[300px] shadow-2xl shadow-blue-500/10 overflow-hidden ring-1 ring-slate-700/50 transition-shadow duration-500 group-hover:shadow-blue-500/20">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-gray-800 rounded-b-2xl z-20"></div>
@@ -122,14 +121,11 @@ export default function ProjectCard({
         </div>
       </div>
 
-      {/* 2. Right Column: Description & Live Terminal */}
       <div className="flex flex-col h-full lg:h-[600px]">
         
-        {/* 설명 영역 */}
         <div className="mb-6 shrink-0">
           
           <div className="flex items-center gap-2 font-mono text-xs text-gray-500 mb-3">
-            {/* ★ 수정된 부분: 에러 방지를 위해 중괄호로 감싸고 문자열 처리 */}
             <span>{"// Env:"}</span>
             
             {projectType === "android" ? (
@@ -176,7 +172,6 @@ export default function ProjectCard({
           </div>
         </div>
 
-        {/* Live Terminal */}
         <div className="flex-1 bg-slate-950 rounded-xl border border-slate-800 shadow-inner overflow-hidden flex flex-col min-h-0">
           <div className="flex justify-between items-center px-4 py-3 bg-slate-900/50 border-b border-slate-800 shrink-0">
             <span className="text-xs text-slate-500 font-mono flex items-center gap-2">

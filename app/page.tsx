@@ -583,7 +583,6 @@ export default function Home() {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  // Hero Typing Effect
   useEffect(() => {
     const fullCommand = "whoami";
     let i = 0;
