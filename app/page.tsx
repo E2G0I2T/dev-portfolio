@@ -1,18 +1,19 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Terminal,
   Smartphone,
   FileCode,
   Mail,
-  Code2,
   Layers,
   Layout,
-  Gamepad,
   Copy,
   Check,
   Play,
+  X,
+  Star,
+  ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
 import ProjectCard, { LogEntry } from "../components/ProjectCard";
@@ -27,6 +28,7 @@ interface ProjectData {
   summary: string;
   specs: string[];
   logs: LogEntry[];
+  featured?: boolean;
 }
 
 const PROJECTS: ProjectData[] = [
@@ -330,6 +332,7 @@ const PROJECTS: ProjectData[] = [
     videoSrc: "/videos/demo3.mp4",
     summary:
       "개인 취향을 분석하여 일본 음악을 추천하고 기록하는 아카이빙 서비스입니다.",
+      featured : true,
     specs: [
       "Firebase Auth 연동으로 안전한 Google 소셜 로그인 구현",
       "Firestore 기반 평점/즐겨찾기 데이터 실시간 동기화",
@@ -552,10 +555,123 @@ const PROJECTS: ProjectData[] = [
       },
     ],
   },
+  {
+    id: 4,
+    type: "android",
+    filename: "droid_insight.kt",
+    title: "DroidInsight - 시스템 모니터",
+    tags: ["Android", "Kotlin", "TrafficStats", "UsageStats", "MPAndroidChart"],
+    videoSrc: "/videos/demo5.mp4",
+    summary:
+      "디바이스의 하드웨어 정보, 네트워크 트래픽, 앱 사용 패턴을 심층 분석하여 시각화하는 시스템 유틸리티 앱입니다.",
+      featured : true,
+    specs: [
+      "TrafficStats API를 활용한 실시간 네트워크 업/다운로드 속도 모니터링 및 그래프 시각화",
+      "UsageStatsManager를 통해 일별 앱 사용 시간을 추적하고 상위 앱 통계 제공",
+      "BroadcastReceiver를 등록하여 배터리 온도, 전압, 상태 변화를 실시간 감지",
+      "커스텀 권한 처리 로직을 통해 보안 설정으로의 자연스러운 UX 유도",
+    ],
+    logs: [
+      {
+        time: 0,
+        type: "info",
+        text: "D/App: onCreate // 앱 실행 및 대시보드 초기화",
+      },
+      {
+        time: 1,
+        type: "success",
+        text: "I/System: Fetch Device Info // 현재 기기 상태 로드",
+      },
+      {
+        time: 9,
+        type: "info",
+        text: "I/Nav: Fragment Change // 네트워크 모니터링 탭으로 이동",
+      },
+      {
+        time: 9.1,
+        type: "info",
+        text: "D/Network: Start Monitoring // TrafficStats 실시간 패킷 감지 시작",
+      },
+      {
+        time: 17,
+        type: "warning",
+        text: "I/Test: Start Speed Check // 네트워크 속도 벤치마크 트리거",
+      },
+      {
+        time: 42.5,
+        type: "success",
+        text: "S/Test: Result Updated // 다운로드 속도 측정 종료",
+      },
+      {
+        time: 45,
+        type: "info",
+        text: "I/Nav: Fragment Change // 앱 사용 통계 탭으로 이동",
+      },
+      {
+        time: 45.1,
+        type: "error",
+        text: "W/Auth: Permission Denied // '사용 정보 접근' 권한 없음 감지",
+      },
+      {
+        time: 47.5,
+        type: "info",
+        text: "I/Auth: Request Intent // 시스템 설정 화면으로 리다이렉트",
+      },
+      {
+        time: 56,
+        type: "success",
+        text: "S/Auth: Permission Granted // 권한 승인",
+      },
+      {
+        time: 57,
+        type: "success",
+        text: "D/Usage: Load Stats // 지난 24시간 앱 사용 데이터 로드 및 차트 렌더링",
+      },
+      {
+        time: 68,
+        type: "success",
+        text: "D/Usage: Load Stats // 위젯 로드",
+      },
+      {
+        time: 72,
+        type: "success",
+        text: "D/Usage: Load Stats // 위젯 탭 변경 (Battery -> RAM usage)",
+      },
+      {
+        time: 73,
+        type: "success",
+        text: "D/Usage: Load Stats // 위젯 새로고침 (변경값 없음)",
+      },
+      {
+        time: 75,
+        type: "success",
+        text: "D/Usage: Load Stats // 위젯 탭 변경 (RAM usage -> Battery)",
+      },
+      {
+        time: 75,
+        type: "success",
+        text: "D/Usage: Load Stats // 위젯 탭 변경 (Battery -> RAM usage)",
+      },
+      {
+        time: 76,
+        type: "success",
+        text: "D/Usage: Load Stats // 위젯 새로고침 (변경값 : 64 -> 66",
+      },
+      {
+        time: 86,
+        type: "success",
+        text: "D/Usage: Load Stats // 기본 테마 변경 감지 : Light Theme",
+      },
+      {
+        time: 92,
+        type: "info",
+        text: "I/App: Session End // --- 영상 종료 ---",
+      },
+    ],
+  },
 ];
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState(0);
   const [typedCommand, setTypedCommand] = useState("");
   const [showResult, setShowResult] = useState(false);
 
@@ -563,7 +679,29 @@ export default function Home() {
 
   const [contactLogs, setContactLogs] = useState<string[]>([]);
   const [isContactRunning, setIsContactRunning] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<"All" | "Android" | "React">(
+    "All",
+  );
+  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(
+    null,
+  );
 
+  // ★ 추가 2: 필터링 로직
+  const filteredProjects = PROJECTS.filter((project) => {
+    if (activeFilter === "All") return true;
+    if (activeFilter === "Android") return project.type === "android";
+    if (activeFilter === "React") return project.type === "react";
+    return true;
+  });
+
+  const featuredProjects = filteredProjects.filter((p) => p.featured);
+  const normalProjects = filteredProjects.filter((p) => !p.featured);
+
+  // ★ 추가 3: 모달 팝업 시 배경 스크롤 방지
+  useEffect(() => {
+    if (selectedProject) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "unset";
+  }, [selectedProject]);
   const handleCopy = () => {
     const textToCopy = `
 {
@@ -620,7 +758,7 @@ export default function Home() {
 
     setTimeout(() => {
       setIsContactRunning(false);
-      window.location.href = `mailto:${emailAddress}?subject=Hello Developer&body=I saw your portfolio...`; 
+      window.location.href = `mailto:${emailAddress}?subject=Hello Developer&body=I saw your portfolio...`;
     }, 4000);
   };
 
@@ -845,60 +983,113 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="projects" className="py-24 w-full">
+        <section id="projects" className="py-24 w-full relative">
           <div className={containerClass}>
-            <div className="mb-12 border-b border-gray-800 pb-2">
-              <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-4">
-                <h2 className="text-2xl font-bold text-green-400 flex items-center gap-2">
-                  <span className="text-slate-600">02.</span> projects.tsx
-                </h2>
+            <div className="mb-12 border-b border-gray-800 pb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <h2 className="text-2xl font-bold text-green-400 flex items-center gap-2 whitespace-nowrap">
+                <span className="text-slate-600">02.</span> projects.tsx
+              </h2>
+              
+              {/* Filter Buttons */}
+              <div className="flex flex-wrap gap-2">
+                {["All", "Android", "React"].map((filter) => (
+                  <button
+                    key={filter}
+                    onClick={() => setActiveFilter(filter as "All" | "Android" | "React")}
+                    className={`px-4 py-1.5 rounded-full text-sm font-mono transition-all border ${
+                      activeFilter === filter
+                        ? "bg-blue-500/20 border-blue-500 text-blue-300"
+                        : "bg-slate-900 border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200"
+                    }`}
+                  >
+                    {filter}
+                  </button>
+                ))}
               </div>
+            </div>
 
-              <div className="flex space-x-1 overflow-x-auto scrollbar-hide">
-                {PROJECTS.map((project, index) => {
-                  const isActive = activeTab === index;
-                  let Icon = Code2;
-                  if (index === 0) Icon = Smartphone;
-                  if (index === 1) Icon = Layout;
-                  if (index === 3) Icon = Gamepad;
-
-                  return (
-                    <button
+            {/* Featured Projects (주력) */}
+            {featuredProjects.length > 0 && (
+              <div className="mb-16">
+                <h3 className="text-sm font-mono text-slate-500 mb-6 flex items-center gap-2">
+                  <Star size={16} className="text-yellow-500" /> FEATURED_PROJECTS
+                </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {featuredProjects.map((project) => (
+                    <div
                       key={project.id}
-                      onClick={() => setActiveTab(index)}
-                      className={`
-                        flex items-center gap-2 px-6 py-3 text-sm font-mono border-t-2 transition-all duration-200 rounded-t-lg
-                        ${
-                          isActive
-                            ? "border-blue-500 bg-slate-900 text-blue-400"
-                            : "border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-900/50"
-                        }
-                      `}
+                      onClick={() => setSelectedProject(project)}
+                      className="group cursor-pointer relative bg-slate-900/40 border border-slate-800 rounded-2xl p-6 hover:bg-slate-800/50 hover:border-blue-500/50 transition-all duration-300 overflow-hidden"
                     >
-                      <Icon size={16} />
-                      {project.filename}
-                    </button>
-                  );
-                })}
+                      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <Terminal size={100} />
+                      </div>
+                      <div className="relative z-10">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400">
+                            {project.type === "android" ? <Smartphone size={24} /> : <Layout size={24} />}
+                          </div>
+                          <h4 className="text-2xl font-bold text-slate-100 group-hover:text-blue-400 transition-colors">
+                            {project.title}
+                          </h4>
+                        </div>
+                        <p className="text-slate-400 mb-6 line-clamp-2">{project.summary}</p>
+                        <div className="flex flex-wrap gap-2 mb-6">
+                          {project.tags.slice(0, 4).map((tag, idx) => (
+                            <span key={idx} className="px-2.5 py-1 text-xs font-mono bg-slate-950 text-slate-300 rounded border border-slate-800">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex items-center text-sm text-blue-400 font-mono group-hover:translate-x-2 transition-transform">
+                          자세히 보기 <ChevronRight size={16} className="ml-1" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className="relative min-h-[600px]">
-              <div
-                key={activeTab}
-                className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-forwards"
-              >
-                <ProjectCard
-                  title={PROJECTS[activeTab].title}
-                  summary={PROJECTS[activeTab].summary}
-                  specs={PROJECTS[activeTab].specs}
-                  tags={PROJECTS[activeTab].tags}
-                  videoSrc={PROJECTS[activeTab].videoSrc}
-                  logs={PROJECTS[activeTab].logs}
-                  projectType={PROJECTS[activeTab].type}
-                />
+            {/* Normal Projects (서브/바둑판) */}
+            {normalProjects.length > 0 && (
+              <div>
+                <h3 className="text-sm font-mono text-slate-500 mb-6 flex items-center gap-2">
+                  <Layers size={16} /> OTHER_PROJECTS
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {normalProjects.map((project) => (
+                    <div
+                      key={project.id}
+                      onClick={() => setSelectedProject(project)}
+                      className="group cursor-pointer bg-slate-900/20 border border-slate-800 rounded-xl p-5 hover:bg-slate-800/40 hover:border-slate-600 transition-all duration-300 flex flex-col h-full"
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="text-slate-400 group-hover:text-green-400 transition-colors">
+                          <FileCode size={24} />
+                        </div>
+                        <ChevronRight size={18} className="text-slate-600 group-hover:text-slate-400 transition-colors" />
+                      </div>
+                      <h4 className="text-lg font-bold text-slate-200 mb-2 group-hover:text-white">{project.title}</h4>
+                      <p className="text-sm text-slate-500 mb-6 flex-grow line-clamp-3">{project.summary}</p>
+                      <div className="flex flex-wrap gap-2 mt-auto">
+                        {project.tags.slice(0, 3).map((tag, idx) => (
+                          <span key={idx} className="text-xs font-mono text-slate-400">
+                            #{tag.replace(/\s+/g, "")}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+            
+            {filteredProjects.length === 0 && (
+              <div className="text-center py-20 text-slate-500 font-mono">
+                No projects found.
+              </div>
+            )}
           </div>
         </section>
 
@@ -957,6 +1148,32 @@ export default function Home() {
           </div>
         </footer>
       </main>
+      {selectedProject && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="absolute inset-0" onClick={() => setSelectedProject(null)}></div>
+          
+          <div className="relative w-full max-w-[1600px] max-h-[90vh] overflow-y-auto overflow-x-hidden bg-slate-950 border border-slate-700 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 scrollbar-hide">
+            <button 
+              onClick={() => setSelectedProject(null)} 
+              className="sticky top-4 left-[calc(100%-3rem)] z-50 p-2 bg-slate-800/80 backdrop-blur rounded-full text-slate-400 hover:text-white hover:bg-slate-700 transition-colors border border-slate-600"
+            >
+              <X size={20} />
+            </button>
+            
+            <div className="p-2 sm:p-6">
+              <ProjectCard
+                title={selectedProject.title}
+                summary={selectedProject.summary}
+                specs={selectedProject.specs}
+                tags={selectedProject.tags}
+                videoSrc={selectedProject.videoSrc}
+                logs={selectedProject.logs}
+                projectType={selectedProject.type}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

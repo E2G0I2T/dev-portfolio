@@ -72,7 +72,7 @@ export default function ProjectCard({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start group">
+    <div className="w-full grid grid-cols-1 lg:grid-cols-[380px_minmax(0,1fr)] gap-10 lg:gap-16 items-start group">
       
       <div className="relative mx-auto lg:mx-0 flex flex-col items-center">
         <div className="relative border-gray-800 bg-gray-900 border-[12px] rounded-[3rem] h-[600px] w-[300px] shadow-2xl shadow-blue-500/10 overflow-hidden ring-1 ring-slate-700/50 transition-shadow duration-500 group-hover:shadow-blue-500/20">
@@ -121,7 +121,8 @@ export default function ProjectCard({
         </div>
       </div>
 
-      <div className="flex flex-col h-full lg:h-[600px]">
+      {/* ★ 수정 1: 강제 600px 높이 제한을 풀고 최소 높이(min-h)로 변경하여 유연하게 늘어나도록 조치 */}
+      <div className="flex flex-col h-full lg:min-h-[600px]">
         
         <div className="mb-6 shrink-0">
           
@@ -139,7 +140,8 @@ export default function ProjectCard({
             )}
           </div>
 
-          <h3 className="text-4xl sm:text-5xl font-bold text-slate-100 mb-5 tracking-tight">
+          {/* ★ 수정 2: break-keep 속성을 추가하여 단어 단위로 줄바꿈 되도록 처리 */}
+          <h3 className="text-4xl sm:text-5xl font-bold text-slate-100 mb-5 tracking-tight break-keep">
             {title}
           </h3>
           
@@ -155,14 +157,15 @@ export default function ProjectCard({
           </div>
 
           <div className="space-y-4 mb-4">
-            <p className="text-slate-200 text-lg font-medium leading-relaxed">
+            {/* ★ 수정 3: 설명(summary) 부분도 break-keep 추가하여 깔끔하게 떨어지게 처리 */}
+            <p className="text-slate-200 text-lg font-medium leading-relaxed break-keep">
               {summary}
             </p>
             <ul className="space-y-2">
               {specs.map((spec, index) => (
                 <li
                   key={index}
-                  className="flex items-start text-slate-400 text-sm sm:text-base leading-snug"
+                  className="flex items-start text-slate-400 text-sm sm:text-base leading-snug break-keep"
                 >
                   <span className="mr-3 mt-1.5 min-w-[6px] h-[6px] rounded-full bg-blue-500/60 block shadow-[0_0_8px_rgba(59,130,246,0.5)]"></span>
                   <span>{spec}</span>
@@ -172,7 +175,8 @@ export default function ProjectCard({
           </div>
         </div>
 
-        <div className="flex-1 bg-slate-950 rounded-xl border border-slate-800 shadow-inner overflow-hidden flex flex-col min-h-0">
+        {/* ★ 수정 4: 콘솔 영역이 찌그러지지 않도록 최소 높이(min-h-[240px])와 shrink-0 부여 */}
+        <div className="flex-1 bg-slate-950 rounded-xl border border-slate-800 shadow-inner overflow-hidden flex flex-col min-h-[240px] shrink-0 mt-4">
           <div className="flex justify-between items-center px-4 py-3 bg-slate-900/50 border-b border-slate-800 shrink-0">
             <span className="text-xs text-slate-500 font-mono flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
