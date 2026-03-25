@@ -25,9 +25,11 @@ interface ProjectData {
   title: string;
   tags: string[];
   videoSrc: string;
+  webVideoSrc?: string;
   summary: string;
   specs: string[];
   logs: LogEntry[];
+  webLogs?: LogEntry[];
   featured?: boolean;
 }
 
@@ -332,7 +334,7 @@ const PROJECTS: ProjectData[] = [
     videoSrc: "/videos/demo3.mp4",
     summary:
       "개인 취향을 분석하여 일본 음악을 추천하고 기록하는 아카이빙 서비스입니다.",
-      featured : true,
+    featured: true,
     specs: [
       "Firebase Auth 연동으로 안전한 Google 소셜 로그인 구현",
       "Firestore 기반 평점/즐겨찾기 데이터 실시간 동기화",
@@ -564,7 +566,7 @@ const PROJECTS: ProjectData[] = [
     videoSrc: "/videos/demo5.mp4",
     summary:
       "디바이스의 하드웨어 정보, 네트워크 트래픽, 앱 사용 패턴을 심층 분석하여 시각화하는 시스템 유틸리티 앱입니다.",
-      featured : true,
+    featured: true,
     specs: [
       "TrafficStats API를 활용한 실시간 네트워크 업/다운로드 속도 모니터링 및 그래프 시각화",
       "UsageStatsManager를 통해 일별 앱 사용 시간을 추적하고 상위 앱 통계 제공",
@@ -666,6 +668,168 @@ const PROJECTS: ProjectData[] = [
         time: 92,
         type: "info",
         text: "I/App: Session End // --- 영상 종료 ---",
+      },
+    ],
+  },
+  {
+    id: 5,
+    type: "react",
+    filename: "StageMap.tsx",
+    title: "StageMap - 종합 공연 큐레이션",
+    tags: ["React Native", "TypeScript", "React Native Web", "Cross-Platform"],
+    videoSrc: "/videos/demo6.mp4",
+    webVideoSrc: "/videos/demo7.mp4",
+    summary:
+      "단일 코드베이스(React Native)로 모바일 앱과 데스크탑 웹 브라우저 환경을 동시에 완벽하게 지원하는 크로스 플랫폼 종합 공연 큐레이션 서비스입니다.",
+    featured: true,
+    specs: [
+      "React Native Web을 도입하여 하나의 코드로 모바일(Android/iOS)과 웹(Web) 환경을 동시 타겟팅하는 효율적인 프론트엔드 아키텍처 설계",
+      "플랫폼별 화면 비율(세로/가로)과 조작 방식(Touch vs Mouse Event)의 차이를 감지하여 자연스럽게 대응하는 동적 반응형 UI/UX 구현",
+      "공연 데이터 API를 연동하고 장르, 지역, 날짜 등 다중 조건이 결합된 복합 필터링 및 검색 알고리즘 최적화",
+      "구동 환경(Web/Mobile)에 따라 외부 지도 API(Google Maps/iFrame) 및 예매처 라우팅 방식을 분기 처리하여 끊김 없는 사용자 경험 제공"
+    ],
+    logs: [
+      {
+        time: 0,
+        type: "info",
+        text: "I/App: Fetch List // 초기 공연 데이터 목록 로드 완료",
+      },
+      {
+        time: 8.2,
+        type: "info",
+        text: "D/Filter: Apply // 장르 필터 적용 (전체 -> 뮤지컬)",
+      },
+      {
+        time: 12.2,
+        type: "info",
+        text: "D/Filter: Apply // 지역 필터 적용 (전체 -> 서울)",
+      },
+      {
+        time: 17.2,
+        type: "info",
+        text: "D/Sort: Change // 정렬 기준 변경 (날짜 오름차순 -> 내림차순)",
+      },
+      {
+        time: 20,
+        type: "info",
+        text: "D/UI: DatePicker // 공연 기간 설정 모달 오픈",
+      },
+      {
+        time: 26,
+        type: "success",
+        text: "I/Filter: Set Range // 기간 필터 적용 완료 (03.20 ~ 03.27)",
+      },
+      {
+        time: 33.7,
+        type: "info",
+        text: 'D/Search: Input // 검색어 입력 감지: "라스트"',
+      },
+      {
+        time: 34,
+        type: "success",
+        text: "S/Search: Result // 검색 및 필터링 결과 업데이트 (1건)",
+      },
+      {
+        time: 38,
+        type: "info",
+        text: "I/Nav: Push Detail // '더 라스트맨' 상세 정보 화면 진입",
+      },
+      {
+        time: 40,
+        type: "success",
+        text: "D/Map: Load Marker // 공연장 위치(링크더스페이스) 구글 맵 마커 로드",
+      },
+      {
+        time: 46,
+        type: "info",
+        text: "I/UI: BottomSheet // 예매처 선택 바텀시트 호출",
+      },
+      {
+        time: 48,
+        type: "warning",
+        text: "W/Intent: Open Browser // 외부 예매처 웹사이트 호출 (YES24)",
+      },
+      {
+        time: 60,
+        type: "info",
+        text: "I/Nav: Pop Back // 앱 상세 화면으로 복귀",
+      },
+      {
+        time: 63,
+        type: "info",
+        text: "I/App: Session End // --- 영상 종료 ---",
+      },
+    ],
+    webLogs: [
+      {
+        time: 0,
+        type: "info",
+        text: "I/Web: Fetch List // (Web) 초기 공연 데이터 목록 로드 완료",
+      },
+      {
+        time: 3.5,
+        type: "info",
+        text: "D/Filter: Dropdown // 장르 드롭다운 선택 (전체 -> 뮤지컬)",
+      },
+      {
+        time: 6.4,
+        type: "info",
+        text: "D/Filter: Dropdown // 지역 드롭다운 선택 (전체 -> 서울)",
+      },
+      {
+        time: 10,
+        type: "info",
+        text: "D/Sort: Dropdown // 정렬 기준 변경 (날짜 오름차순 -> 내림차순)",
+      },
+      {
+        time: 12,
+        type: "info",
+        text: "D/UI: DatePicker // (Web) 공연 기간 설정 팝업 마우스 오버 및 오픈",
+      },
+      {
+        time: 18.5,
+        type: "success",
+        text: "I/Filter: Set Range // 기간 필터 적용 완료 (03.21 ~ 03.23)",
+      },
+      {
+        time: 23,
+        type: "info",
+        text: 'D/Search: KeyDown // 검색창 포커스 및 검색어 입력 대기',
+      },
+      {
+        time: 25,
+        type: "success",
+        text: "S/Search: Result // 검색 및 필터링 결과 업데이트 (1건 렌더링)",
+      },
+      {
+        time: 26.5,
+        type: "info",
+        text: "I/Nav: Link Click // '오! 캐롤' 리스트 아이템 클릭 -> 상세 정보 페이지 이동",
+      },
+      {
+        time: 29,
+        type: "success",
+        text: "D/Map: iFrame Load // 공연장 위치 구글 맵 웹 컴포넌트 로드",
+      },
+      {
+        time: 32,
+        type: "info",
+        text: "I/UI: Modal // 하단 예매처 선택 모달창 호출",
+      },
+      {
+        time: 35,
+        type: "warning",
+        text: "W/Route: New Tab // 외부 예매처 웹사이트(인터파크 티켓) 새 탭으로 열기",
+      },
+      {
+        time: 40,
+        type: "info",
+        text: "I/Nav: Tab Focus // 기존 앱 탭으로 브라우저 포커스 복귀",
+      },
+      {
+        time: 43,
+        type: "info",
+        text: "I/Web: Session End // --- 웹 디버그 세션 종료 ---",
       },
     ],
   },
@@ -989,13 +1153,15 @@ export default function Home() {
               <h2 className="text-2xl font-bold text-green-400 flex items-center gap-2 whitespace-nowrap">
                 <span className="text-slate-600">02.</span> projects.tsx
               </h2>
-              
+
               {/* Filter Buttons */}
               <div className="flex flex-wrap gap-2">
                 {["All", "Android", "React"].map((filter) => (
                   <button
                     key={filter}
-                    onClick={() => setActiveFilter(filter as "All" | "Android" | "React")}
+                    onClick={() =>
+                      setActiveFilter(filter as "All" | "Android" | "React")
+                    }
                     className={`px-4 py-1.5 rounded-full text-sm font-mono transition-all border ${
                       activeFilter === filter
                         ? "bg-blue-500/20 border-blue-500 text-blue-300"
@@ -1012,7 +1178,8 @@ export default function Home() {
             {featuredProjects.length > 0 && (
               <div className="mb-16">
                 <h3 className="text-sm font-mono text-slate-500 mb-6 flex items-center gap-2">
-                  <Star size={16} className="text-yellow-500" /> FEATURED_PROJECTS
+                  <Star size={16} className="text-yellow-500" />{" "}
+                  FEATURED_PROJECTS
                 </h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {featuredProjects.map((project) => (
@@ -1027,22 +1194,32 @@ export default function Home() {
                       <div className="relative z-10">
                         <div className="flex items-center gap-3 mb-4">
                           <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400">
-                            {project.type === "android" ? <Smartphone size={24} /> : <Layout size={24} />}
+                            {project.type === "android" ? (
+                              <Smartphone size={24} />
+                            ) : (
+                              <Layout size={24} />
+                            )}
                           </div>
                           <h4 className="text-2xl font-bold text-slate-100 group-hover:text-blue-400 transition-colors">
                             {project.title}
                           </h4>
                         </div>
-                        <p className="text-slate-400 mb-6 line-clamp-2">{project.summary}</p>
+                        <p className="text-slate-400 mb-6 line-clamp-2">
+                          {project.summary}
+                        </p>
                         <div className="flex flex-wrap gap-2 mb-6">
                           {project.tags.slice(0, 4).map((tag, idx) => (
-                            <span key={idx} className="px-2.5 py-1 text-xs font-mono bg-slate-950 text-slate-300 rounded border border-slate-800">
+                            <span
+                              key={idx}
+                              className="px-2.5 py-1 text-xs font-mono bg-slate-950 text-slate-300 rounded border border-slate-800"
+                            >
                               {tag}
                             </span>
                           ))}
                         </div>
                         <div className="flex items-center text-sm text-blue-400 font-mono group-hover:translate-x-2 transition-transform">
-                          자세히 보기 <ChevronRight size={16} className="ml-1" />
+                          자세히 보기{" "}
+                          <ChevronRight size={16} className="ml-1" />
                         </div>
                       </div>
                     </div>
@@ -1068,13 +1245,23 @@ export default function Home() {
                         <div className="text-slate-400 group-hover:text-green-400 transition-colors">
                           <FileCode size={24} />
                         </div>
-                        <ChevronRight size={18} className="text-slate-600 group-hover:text-slate-400 transition-colors" />
+                        <ChevronRight
+                          size={18}
+                          className="text-slate-600 group-hover:text-slate-400 transition-colors"
+                        />
                       </div>
-                      <h4 className="text-lg font-bold text-slate-200 mb-2 group-hover:text-white">{project.title}</h4>
-                      <p className="text-sm text-slate-500 mb-6 flex-grow line-clamp-3">{project.summary}</p>
+                      <h4 className="text-lg font-bold text-slate-200 mb-2 group-hover:text-white">
+                        {project.title}
+                      </h4>
+                      <p className="text-sm text-slate-500 mb-6 flex-grow line-clamp-3">
+                        {project.summary}
+                      </p>
                       <div className="flex flex-wrap gap-2 mt-auto">
                         {project.tags.slice(0, 3).map((tag, idx) => (
-                          <span key={idx} className="text-xs font-mono text-slate-400">
+                          <span
+                            key={idx}
+                            className="text-xs font-mono text-slate-400"
+                          >
                             #{tag.replace(/\s+/g, "")}
                           </span>
                         ))}
@@ -1084,7 +1271,7 @@ export default function Home() {
                 </div>
               </div>
             )}
-            
+
             {filteredProjects.length === 0 && (
               <div className="text-center py-20 text-slate-500 font-mono">
                 No projects found.
@@ -1150,16 +1337,19 @@ export default function Home() {
       </main>
       {selectedProject && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="absolute inset-0" onClick={() => setSelectedProject(null)}></div>
-          
+          <div
+            className="absolute inset-0"
+            onClick={() => setSelectedProject(null)}
+          ></div>
+
           <div className="relative w-full max-w-[1600px] max-h-[90vh] overflow-y-auto overflow-x-hidden bg-slate-950 border border-slate-700 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 scrollbar-hide">
-            <button 
-              onClick={() => setSelectedProject(null)} 
+            <button
+              onClick={() => setSelectedProject(null)}
               className="sticky top-4 left-[calc(100%-3rem)] z-50 p-2 bg-slate-800/80 backdrop-blur rounded-full text-slate-400 hover:text-white hover:bg-slate-700 transition-colors border border-slate-600"
             >
               <X size={20} />
             </button>
-            
+
             <div className="p-2 sm:p-6">
               <ProjectCard
                 title={selectedProject.title}
@@ -1167,7 +1357,9 @@ export default function Home() {
                 specs={selectedProject.specs}
                 tags={selectedProject.tags}
                 videoSrc={selectedProject.videoSrc}
+                webVideoSrc={selectedProject.webVideoSrc}
                 logs={selectedProject.logs}
+                webLogs={selectedProject.webLogs}
                 projectType={selectedProject.type}
               />
             </div>
