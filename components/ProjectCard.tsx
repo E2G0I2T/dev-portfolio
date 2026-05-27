@@ -17,8 +17,8 @@ interface ProjectCardProps {
   videoSrc?: string;
   webVideoSrc?: string;
   logs: LogEntry[];
-  webLogs?: LogEntry[]; // ★ 웹 전용 로그 받기
-  projectType: "android" | "react";
+  webLogs?: LogEntry[];
+  projectType: "android" | "react" | "sync"; // ← sync 추가
 }
 
 const formatLogTime = (seconds: number) => {
@@ -41,22 +41,21 @@ export default function ProjectCard({
   const videoRef = useRef<HTMLVideoElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // sync 타입은 항상 web 모드로 시작
   const [viewMode, setViewMode] = useState<"mobile" | "web">(
-    videoSrc ? "mobile" : "web",
+    projectType === "sync" ? "web" : videoSrc ? "mobile" : "web",
   );
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentLogs, setCurrentLogs] = useState<LogEntry[]>([]);
 
   const hasBothVideos = Boolean(videoSrc && webVideoSrc);
-  const currentVideoUrl = viewMode === "mobile" ? videoSrc : webVideoSrc;
+  const currentVideoUrl = viewMode === "mobile" ? videoSrc : webVideoSrc ?? videoSrc;
 
-  // ★ 현재 모드에 따라 읽어올 로그 데이터 소스 결정 (webLogs가 없으면 기본 logs 사용)
   const targetLogs = viewMode === "web" && webLogs ? webLogs : logs;
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
       const currentTime = videoRef.current.currentTime;
-      // 선택된 타겟 로그를 기준으로 필터링
       const activeLogs = targetLogs.filter((log) => log.time <= currentTime);
       setCurrentLogs(activeLogs);
     }
@@ -94,16 +93,16 @@ export default function ProjectCard({
     }
   };
 
-  // ==========================================
-  // UI 블록 분리 (레이아웃 변환을 쉽게 하기 위함)
-  // ==========================================
-
-  // 1. 텍스트 정보 블록
+  // 텍스트 정보 블록
   const TextContent = (
     <div className="shrink-0 w-full animate-in fade-in duration-500">
       <div className="flex items-center gap-2 font-mono text-xs text-gray-500 mb-3">
         <span>{"// Env:"}</span>
-        {viewMode === "web" ? (
+        {projectType === "sync" ? (
+          <span className="text-blue-400 bg-blue-900/20 px-2 py-1 rounded border border-blue-500/20 font-bold">
+            WEB + MOBILE SYNC
+          </span>
+        ) : viewMode === "web" ? (
           <span className="text-purple-400 bg-purple-900/20 px-2 py-1 rounded border border-purple-500/20 font-bold">
             WEB BROWSER
           </span>
@@ -150,7 +149,7 @@ export default function ProjectCard({
     </div>
   );
 
-  // 2. 디버그 콘솔 블록
+  // 디버그 콘솔 블록
   const ConsoleContent = (
     <div className="w-full h-full bg-slate-950 rounded-xl border border-slate-800 shadow-inner overflow-hidden flex flex-col min-h-[400px]">
       <div className="flex justify-between items-center px-4 py-3 bg-slate-900/50 border-b border-slate-800 shrink-0">
@@ -208,10 +207,70 @@ export default function ProjectCard({
     </div>
   );
 
+  // ── 웹 브라우저 프레임 (sync 타입 + web 모드 공통 사용) ────────────────
+  const WebFrame = (
+    <div className="w-full aspect-video relative border-gray-700 bg-gray-900 border rounded-xl shadow-2xl overflow-hidden flex flex-col">
+      <div className="h-10 bg-slate-800 border-b border-slate-700 flex items-center px-4 gap-2 shrink-0">
+        <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+        <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+        <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+        <div className="ml-4 flex-1 flex justify-center">
+          <div className="bg-slate-900/50 rounded-md h-6 w-1/2 max-w-md flex items-center px-3 text-[10px] text-slate-500 font-mono border border-slate-700/50">
+            localhost:5173
+          </div>
+        </div>
+      </div>
+      <div className="flex-1 bg-black flex items-center justify-center relative">
+        {currentVideoUrl ? (
+          <video
+            key={viewMode}
+            ref={videoRef}
+            src={currentVideoUrl}
+            className="w-full h-full object-cover"
+            muted
+            playsInline
+            onTimeUpdate={handleTimeUpdate}
+            onEnded={() => setIsPlaying(false)}
+          />
+        ) : (
+          <div className="text-slate-500 text-sm">Video not found</div>
+        )}
+        {!isPlaying && (
+          <div
+            className="absolute inset-0 bg-black/40 flex items-center justify-center z-10 cursor-pointer hover:bg-black/30"
+            onClick={togglePlay}
+          >
+            <div className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 hover:scale-105 transition-transform">
+              <Play className="fill-white text-white ml-2" size={44} />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  // ── 재생 컨트롤 ────────────────────────────────────────────────────────
+  const Controls = (
+    <div className="flex justify-center gap-4">
+      <button
+        onClick={togglePlay}
+        className="p-3 rounded-full bg-slate-800/80 text-slate-300 hover:text-white border border-slate-700"
+      >
+        {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+      </button>
+      <button
+        onClick={handleReplay}
+        className="p-3 rounded-full bg-slate-800/80 text-slate-300 hover:text-white border border-slate-700"
+      >
+        <RefreshCw size={20} />
+      </button>
+    </div>
+  );
+
   return (
     <div className="w-full">
-      {/* 글로벌 토글 스위치 (최상단 중앙 배치) */}
-      {hasBothVideos && (
+      {/* 탭 토글 — sync 타입은 숨김 */}
+      {hasBothVideos && projectType !== "sync" && (
         <div className="flex justify-center mb-10">
           <div className="flex bg-slate-900/80 backdrop-blur rounded-full p-1.5 border border-slate-700 shadow-xl">
             <button
@@ -238,11 +297,25 @@ export default function ProjectCard({
         </div>
       )}
 
-      {/* 모바일 모드 레이아웃: [좌측: 세로 영상] + [우측: 텍스트 및 콘솔(상하)] */}
-      {viewMode === "mobile" ? (
+      {/* ── sync 타입 레이아웃 ── */}
+      {projectType === "sync" ? (
+        <div className="w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-10 lg:gap-16 items-start">
+          <div className="flex flex-col gap-6 w-full">
+            {WebFrame}
+            {Controls}
+            <div className="mt-4 border-t border-slate-800 pt-8">
+              {TextContent}
+            </div>
+          </div>
+          <div className="w-full h-[600px] lg:h-[calc(100vh-160px)] lg:sticky lg:top-8">
+            {ConsoleContent}
+          </div>
+        </div>
+
+      ) : viewMode === "mobile" ? (
+        /* ── 기존 mobile 레이아웃 ── */
         <div className="w-full grid grid-cols-1 lg:grid-cols-[380px_minmax(0,1fr)] gap-10 lg:gap-16 items-start">
           <div className="relative w-full mx-auto flex flex-col items-center">
-            {/* 스마트폰 프레임 */}
             <div className="relative border-gray-800 bg-gray-900 border-[12px] rounded-[3rem] h-[660px] w-[340px] shadow-2xl overflow-hidden ring-1 ring-slate-700/50">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-gray-800 rounded-b-2xl z-20"></div>
               <div className="w-full h-full bg-slate-800 flex items-center justify-center relative">
@@ -272,7 +345,6 @@ export default function ProjectCard({
                 )}
               </div>
             </div>
-            {/* 재생 컨트롤 */}
             <div className="mt-6 flex justify-center gap-4">
               <button
                 onClick={togglePlay}
@@ -288,7 +360,6 @@ export default function ProjectCard({
               </button>
             </div>
           </div>
-
           <div className="flex flex-col h-full lg:min-h-[660px]">
             {TextContent}
             <div className="mt-6 flex-1 h-full min-h-[300px]">
@@ -296,51 +367,12 @@ export default function ProjectCard({
             </div>
           </div>
         </div>
+
       ) : (
-        /* 웹 모드 레이아웃: [좌측: 가로 영상 및 텍스트(상하)] + [우측: 콘솔 고정] */
+        /* ── 기존 web 레이아웃 ── */
         <div className="w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-10 lg:gap-16 items-start">
           <div className="flex flex-col gap-8 w-full">
-            {/* 웹 브라우저 프레임 */}
-            <div className="w-full aspect-video relative border-gray-700 bg-gray-900 border rounded-xl shadow-2xl overflow-hidden flex flex-col">
-              <div className="h-10 bg-slate-800 border-b border-slate-700 flex items-center px-4 gap-2 shrink-0">
-                <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-                <div className="ml-4 flex-1 flex justify-center">
-                  <div className="bg-slate-900/50 rounded-md h-6 w-1/2 max-w-md flex items-center px-3 text-[10px] text-slate-500 font-mono border border-slate-700/50">
-                    localhost:3000
-                  </div>
-                </div>
-              </div>
-              <div className="flex-1 bg-black flex items-center justify-center relative">
-                {currentVideoUrl ? (
-                  <video
-                    key="web"
-                    ref={videoRef}
-                    src={currentVideoUrl}
-                    className="w-full h-full object-cover"
-                    muted
-                    playsInline
-                    onTimeUpdate={handleTimeUpdate}
-                    onEnded={() => setIsPlaying(false)}
-                  />
-                ) : (
-                  <div className="text-slate-500 text-sm">Video not found</div>
-                )}
-                {!isPlaying && (
-                  <div
-                    className="absolute inset-0 bg-black/40 flex items-center justify-center z-10 cursor-pointer hover:bg-black/30"
-                    onClick={togglePlay}
-                  >
-                    <div className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 hover:scale-105 transition-transform">
-                      <Play className="fill-white text-white ml-2" size={44} />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* 웹 모드 재생 컨트롤 */}
+            {WebFrame}
             <div className="flex justify-center gap-4 -mt-2">
               <button
                 onClick={togglePlay}
@@ -355,13 +387,10 @@ export default function ProjectCard({
                 <RefreshCw size={20} />
               </button>
             </div>
-
             <div className="mt-4 border-t border-slate-800 pt-8">
               {TextContent}
             </div>
           </div>
-
-          {/* 우측 콘솔 영역 (Sticky 설정으로 스크롤을 내려도 항상 화면에 고정됨) */}
           <div className="w-full h-[600px] lg:h-[calc(100vh-160px)] lg:sticky lg:top-8">
             {ConsoleContent}
           </div>

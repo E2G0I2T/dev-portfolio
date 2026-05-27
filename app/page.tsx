@@ -20,7 +20,7 @@ import ProjectCard, { LogEntry } from "../components/ProjectCard";
 
 interface ProjectData {
   id: number;
-  type: "android" | "react";
+  type: "android" | "react" | "sync";
   filename: string;
   title: string;
   tags: string[];
@@ -686,7 +686,7 @@ const PROJECTS: ProjectData[] = [
       "React Native Web을 도입하여 하나의 코드로 모바일(Android/iOS)과 웹(Web) 환경을 동시 타겟팅하는 효율적인 프론트엔드 아키텍처 설계",
       "플랫폼별 화면 비율(세로/가로)과 조작 방식(Touch vs Mouse Event)의 차이를 감지하여 자연스럽게 대응하는 동적 반응형 UI/UX 구현",
       "공연 데이터 API를 연동하고 장르, 지역, 날짜 등 다중 조건이 결합된 복합 필터링 및 검색 알고리즘 최적화",
-      "구동 환경(Web/Mobile)에 따라 외부 지도 API(Google Maps/iFrame) 및 예매처 라우팅 방식을 분기 처리하여 끊김 없는 사용자 경험 제공"
+      "구동 환경(Web/Mobile)에 따라 외부 지도 API(Google Maps/iFrame) 및 예매처 라우팅 방식을 분기 처리하여 끊김 없는 사용자 경험 제공",
     ],
     logs: [
       {
@@ -794,7 +794,7 @@ const PROJECTS: ProjectData[] = [
       {
         time: 23,
         type: "info",
-        text: 'D/Search: KeyDown // 검색창 포커스 및 검색어 입력 대기',
+        text: "D/Search: KeyDown // 검색창 포커스 및 검색어 입력 대기",
       },
       {
         time: 25,
@@ -833,6 +833,253 @@ const PROJECTS: ProjectData[] = [
       },
     ],
   },
+  {
+    id: 6,
+    type: "sync",
+    filename: "syncflow.tsx",
+    title: "SyncFlow - 실시간 칸반 보드",
+    tags: [
+      "React Native",
+      "React",
+      "Vite",
+      "Spring Boot",
+      "Socket.io",
+      "TypeScript",
+      "Zustand",
+      "JWT",
+    ],
+    videoSrc: "/videos/demo8.mp4",
+    summary:
+      "React Native(모바일)와 React Vite(웹)를 Socket.io로 실시간 동기화하는 MSA 구조의 칸반 보드 앱입니다. 한 플랫폼의 카드 변경이 다른 플랫폼에 즉시 반영됩니다.",
+    featured: true,
+    specs: [
+      "Spring Boot REST API + Express Socket.io 서버의 MSA 구조로 REST와 실시간 통신 역할 분리",
+      "카드 이동 시 낙관적 업데이트(Optimistic Update)를 적용해 소켓 응답 전에 UI를 먼저 반영, 빠른 사용자 경험 제공",
+      "JWT Bearer Token 인증과 Zustand 전역 상태로 웹/앱 동일한 인증 흐름 구현",
+      "드래그앤드롭(@dnd-kit/웹, react-native-reanimated/앱), 카드 상세(Tiptap 리치에디터), 댓글 실시간 동기화 등 완성도 높은 협업 기능 구현",
+    ],
+    logs: [
+      // ── 웹 파트 ──────────────────────────────────────────
+      {
+        time: 0,
+        type: "info",
+        text: "[Web] App Start // 웹 클라이언트 초기 렌더링",
+      },
+      {
+        time: 3,
+        type: "info",
+        text: "[Web/Auth] Signup // 회원가입 폼 입력 (name: tester)",
+      },
+      {
+        time: 8,
+        type: "success",
+        text: "[Web/Auth] POST /api/auth/signup // JWT 발급 성공",
+      },
+      {
+        time: 12,
+        type: "info",
+        text: "[Web/Auth] Login // 로그인 완료, localStorage 토큰 저장",
+      },
+      {
+        time: 18,
+        type: "info",
+        text: "[Web/Board] POST /api/boards // 보드 생성 (테스트 보드 프로젝트 123)",
+      },
+      {
+        time: 25,
+        type: "success",
+        text: "[Web/Board] Load // 칸반 보드 진입, 기본 컬럼 4개 생성 확인",
+      },
+      {
+        time: 33,
+        type: "info",
+        text: "[Web/Card] POST /api/boards/:id/cards // 카드 추가 (UI 디자인 제작)",
+      },
+      {
+        time: 40,
+        type: "info",
+        text: "[Web/Card] POST /api/boards/:id/cards // 카드 추가 (프로젝트 코드 리뷰)",
+      },
+      {
+        time: 47,
+        type: "info",
+        text: "[Web/Card] POST /api/boards/:id/cards // 카드 추가 (PrivacyPolicy 작성)",
+      },
+      {
+        time: 55,
+        type: "info",
+        text: "[Web/Socket] join_board // Socket.io 보드 룸 입장",
+      },
+      {
+        time: 58,
+        type: "info",
+        text: "[Web/Card] Drag & Drop // 카드 드래그 이동 (할 일 → 진행 중)",
+      },
+      {
+        time: 62,
+        type: "success",
+        text: "[Web/Socket] move_card emit // 카드 이동 이벤트 발송",
+      },
+      {
+        time: 65,
+        type: "info",
+        text: "[Web/Card] Dropdown // 드롭다운 메뉴 열기 → 상태 변경",
+      },
+      {
+        time: 70,
+        type: "success",
+        text: "[Web/Card] PATCH /api/cards/:id/move // 카드 이동 API 호출 성공",
+      },
+      {
+        time: 75,
+        type: "info",
+        text: "[Web/Card] Delete // 카드 삭제 확인 팝업 → 삭제 완료",
+      },
+      {
+        time: 82,
+        type: "info",
+        text: "[Web/Card] Modal Open // 카드 상세 모달 진입 (PrivacyPolicy 작성)",
+      },
+      {
+        time: 88,
+        type: "info",
+        text: "[Web/Card] Detail // 담당자(담당자 1), 시작일(05/26), 마감일(05/28) 입력",
+      },
+      {
+        time: 95,
+        type: "info",
+        text: "[Web/Card] Label // 카테고리 라벨 '개발' 선택",
+      },
+      {
+        time: 100,
+        type: "info",
+        text: "[Web/Card] RichEditor // Tiptap 에디터 상세 내용 입력",
+      },
+      {
+        time: 107,
+        type: "info",
+        text: "[Web/Card] Comment // 댓글 '댓글입니다' 등록",
+      },
+      {
+        time: 112,
+        type: "success",
+        text: "[Web/Socket] comment_added // 댓글 실시간 브로드캐스트",
+      },
+      {
+        time: 118,
+        type: "success",
+        text: "[Web/Card] PUT /api/cards/:id // 카드 저장 완료",
+      },
+      {
+        time: 123,
+        type: "info",
+        text: "[Web/Card] Drag & Drop // 카드 드래그 이동 (할 일 → 진행 중)",
+      },
+      {
+        time: 130,
+        type: "success",
+        text: "[Web/Socket] move_card emit // 이동 이벤트 발송 성공",
+      },
+      {
+        time: 137,
+        type: "info",
+        text: "[Web/Search] 🔍 // 검색창 열기, 키워드 검색",
+      },
+      {
+        time: 143,
+        type: "success",
+        text: "[Web/Search] Filter // 검색 결과 필터링 완료",
+      },
+
+      // ── 앱 파트 ──────────────────────────────────────────
+      { time: 150, type: "info", text: "[App] Launch // React Native 앱 실행" },
+      {
+        time: 155,
+        type: "info",
+        text: "[App/Auth] Login // 앱 로그인, AsyncStorage 토큰 저장",
+      },
+      {
+        time: 161,
+        type: "success",
+        text: "[App/Board] Sync // 웹에서 생성한 보드 목록 동기화 확인",
+      },
+      {
+        time: 165,
+        type: "info",
+        text: "[App/Board] Enter // 보드 진입, 웹 변경사항 반영 확인",
+      },
+      {
+        time: 169,
+        type: "success",
+        text: "[App/Socket] join_board // Socket.io 같은 보드 룸 입장",
+      },
+      {
+        time: 173,
+        type: "info",
+        text: "[App/Card] LongPress Drag // 카드 롱프레스 드래그 이동",
+      },
+      {
+        time: 178,
+        type: "success",
+        text: "[App/Socket] move_card emit // 이동 이벤트 발송",
+      },
+      {
+        time: 183,
+        type: "success",
+        text: "[Web/Socket] card_moved // 웹에서 실시간 카드 이동 반영",
+      },
+      {
+        time: 188,
+        type: "info",
+        text: "[App/Card] Dropdown // 드롭다운 상태 변경 메뉴 사용",
+      },
+      {
+        time: 193,
+        type: "info",
+        text: "[App/Card] Delete // 카드 삭제 Alert 확인 → 삭제",
+      },
+      {
+        time: 198,
+        type: "success",
+        text: "[App/Card] DELETE /api/cards/:id // 삭제 API 성공",
+      },
+      {
+        time: 203,
+        type: "info",
+        text: "[App/Card] Modal // 카드 상세 모달 진입",
+      },
+      {
+        time: 210,
+        type: "info",
+        text: "[App/Card] RichEditor // pell-rich-editor 상세 내용 확인",
+      },
+      {
+        time: 215,
+        type: "info",
+        text: "[App/Card] Comment // 댓글 목록 확인 및 댓글 등록",
+      },
+      {
+        time: 220,
+        type: "success",
+        text: "[App/Socket] comment_added // 댓글 실시간 동기화",
+      },
+      {
+        time: 225,
+        type: "info",
+        text: "[App/Search] 🔍 // 검색창 열기, 키워드 입력",
+      },
+      {
+        time: 230,
+        type: "success",
+        text: "[App/Search] Filter // 검색 결과 필터링 완료",
+      },
+      {
+        time: 235,
+        type: "info",
+        text: "I/App: Session End // --- 영상 종료 ---",
+      },
+    ],
+  },
 ];
 
 export default function Home() {
@@ -852,11 +1099,11 @@ export default function Home() {
 
   // ★ 추가 2: 필터링 로직
   const filteredProjects = PROJECTS.filter((project) => {
-    if (activeFilter === "All") return true;
-    if (activeFilter === "Android") return project.type === "android";
-    if (activeFilter === "React") return project.type === "react";
-    return true;
-  });
+  if (activeFilter === "All") return true;
+  if (activeFilter === "Android") return project.type === "android";
+  if (activeFilter === "React") return project.type === "react" || project.type === "sync";
+  return true;
+});
 
   const featuredProjects = filteredProjects.filter((p) => p.featured);
   const normalProjects = filteredProjects.filter((p) => !p.featured);
