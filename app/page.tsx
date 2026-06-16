@@ -1080,6 +1080,507 @@ const PROJECTS: ProjectData[] = [
       },
     ],
   },
+  {
+    id: 7,
+    type: "react",
+    filename: "bookora.dart",
+    title: "Bookora - 도서 쇼핑 플랫폼",
+    tags: [
+      "Flutter",
+      "Dart",
+      "Riverpod",
+      "Supabase",
+      "Firebase Hosting",
+      "Kakao API",
+      "GoRouter",
+    ],
+    videoSrc: "/videos/demo_m.mp4",
+    webVideoSrc: "/videos/demo_p.mp4",
+    summary:
+      "Flutter 단일 코드베이스로 Android와 Web을 동시 지원하는 크로스플랫폼 도서 쇼핑 앱입니다. 카카오 도서/주소 API, Supabase Auth·DB, Firebase Hosting 배포까지 완성된 풀스택 커머스 프로젝트입니다.",
+    featured: true,
+    specs: [
+      "Flutter 단일 코드베이스로 Android/Web 동시 구현, GoRouter ShellRoute 기반 반응형 레이아웃 자동 전환 (모바일: 하단 5탭, 웹: 상단 네비게이션)",
+      "Riverpod NotifierProvider 패턴으로 장바구니·찜·주문 전역 상태 관리, 검색 디바운스(500ms) 최적화 및 스켈레톤 UI 적용",
+      "Supabase Auth 이메일 로그인/회원가입 + PostgreSQL Row Level Security로 사용자별 주문·찜 목록 서버 동기화, GoRouter Auth 가드로 비인가 접근 차단",
+      "카카오 도서 검색 API·우편번호 API(WebView), 마이페이지 카드번호·전화번호 포매터, 배송 요청사항·결제 수단 설정, 주문 시 배송·결제 정보 확인 다이얼로그 등 커머스 완성도 구현",
+    ],
+    logs: [
+      // ── 회원가입 ──
+      {
+        time: 0,
+        type: "info",
+        text: "[App] Launch // Flutter 앱 실행, Supabase 초기화",
+      },
+      {
+        time: 1,
+        type: "warning",
+        text: "[Auth] Check Session // 로그인 세션 → 회원가입 페이지 표시",
+      },
+      {
+        time: 12.5,
+        type: "success",
+        text: "[Auth] SignUp // 회원가입 완료 → 홈 화면으로 이동",
+      },
+      {
+        time: 15.5,
+        type: "success",
+        text: "[API] Kakao Books // 데이터 로드 완료",
+      },
+
+      // ── 로그아웃 후 로그인 ──
+      {
+        time: 18.3,
+        type: "info",
+        text: "[Auth] SignOut // 로그아웃 → 로그인 페이지 이동",
+      },
+      {
+        time: 23,
+        type: "info",
+        text: "[Auth] Validation // 잘못된 이메일 형식 입력 → 유효성 오류 표시",
+      },
+      {
+        time: 28,
+        type: "info",
+        text: "[Auth] Validation // 등록되지 않은 이메일 또는 비밀번호 → 오류 메시지 표시",
+      },
+      {
+        time: 40.5,
+        type: "success",
+        text: "[Auth] SignIn // 로그인 완료 → 홈 화면 진입",
+      },
+      {
+        time: 43.5,
+        type: "success",
+        text: "[API] Kakao Books // 데이터 로드 완료",
+      },
+
+      // ── 홈 화면 탐색 ──
+      {
+        time: 47,
+        type: "info",
+        text: "[UI] add to wishlist // 찜 목록에 도서 추가",
+      },
+      {
+        time: 51.4,
+        type: "info",
+        text: "[UI] Category // '소설' 탭 클릭 → 소설 도서 목록 로드",
+      },
+      {
+        time: 55,
+        type: "info",
+        text: "[UI] Category // '경제/경영' 탭 클릭 → 경제/경영 도서 로드",
+      },
+
+      // ── 검색 ──
+      {
+        time: 63,
+        type: "info",
+        text: '[Search] Input // 검색어 "정의" 입력',
+      },
+      {
+        time: 63.2,
+        type: "success",
+        text: '[Search] Result // "정의" 검색 결과 로드 완료',
+      },
+
+      // ── 도서 상세 ──
+      {
+        time: 74.5,
+        type: "info",
+        text: "[Nav] Book Detail // '정의란 무엇인가' 도서 상세 페이지 진입",
+      },
+      {
+        time: 83.3,
+        type: "info",
+        text: "[Riverpod] CartNotifier // 장바구니 담기 버튼 클릭",
+      },
+      {
+        time: 83.33,
+        type: "success",
+        text: "[Riverpod] CartNotifier // 장바구니 추가 (총 1권)",
+      },
+
+      // ── 바로 구매 다이얼로그 ──
+      {
+        time: 86.3,
+        type: "info",
+        text: "[UI] Direct Order // 바로 구매 버튼 클릭 → 주문 확인 다이얼로그",
+      },
+      {
+        time: 86.5,
+        type: "warning",
+        text: "[UI] Order Dialog // 배송 정보 미입력 → 주문하기 버튼 비활성화 안내",
+      },
+      {
+        time: 88,
+        type: "info",
+        text: "[UI] Order Dialog // 취소 → 다이얼로그 닫기",
+      },
+
+      // ── 찜 목록 ──
+      {
+        time: 91,
+        type: "info",
+        text: "[Nav] Wishlist // 하단 찜 탭 이동 → 찜 목록 (2권) 표시",
+      },
+      {
+        time: 92,
+        type: "info",
+        text: "[UI] Wishlist Delete All // 전체 삭제 버튼 클릭 → 확인 다이얼로그",
+      },
+      {
+        time: 93,
+        type: "success",
+        text: "[Riverpod] WishlistNotifier // 찜 목록 전체 삭제 완료",
+      },
+
+      // ── 마이페이지 이동 ──
+      {
+        time: 94,
+        type: "info",
+        text: "[Nav] MyPage // 하단 마이페이지 탭 이동",
+      },
+      {
+        time: 105,
+        type: "info",
+        text: "[UI] MyPage Phone // 전화번호 입력 → 자동 포매터 적용 (010-0000-0000)",
+      },
+
+      // ── 주소 검색 ──
+      {
+        time: 112,
+        type: "info",
+        text: "[WebView] Kakao Postcode // 주소 검색 버튼 클릭 → WebView 로드",
+      },
+      {
+        time: 113.5,
+        type: "success",
+        text: "[WebView] Kakao Postcode // 카카오 주소 검색 API 로드 완료",
+      },
+      {
+        time: 128,
+        type: "success",
+        text: "[WebView] Address Selected // 주소 선택 → Flutter로 전달",
+      },
+
+      // ── 배송 요청사항 ──
+      {
+        time: 138.3,
+        type: "info",
+        text: "[UI] Delivery Request // 배송 요청사항 드롭다운 → '기타' 선택, 직접 입력 박스 표시",
+      },
+
+      // ── 결제 수단 설정 ──
+      {
+        time: 151,
+        type: "info",
+        text: "[UI] Card Number // 카드번호 입력 → 자동 포매터 (2020-2020-2020-2020)",
+      },
+      {
+        time: 155,
+        type: "info",
+        text: "[UI] Card Expiry // 유효기간 입력 → 자동 포매터 (02/28)",
+      },
+      {
+        time: 161,
+        type: "success",
+        text: "[MyPage] Save // 마이페이지 저장 완료 (스낵바 표시)",
+      },
+
+      // ── 유효성 검사 실패 ──
+      {
+        time: 177.3,
+        type: "warning",
+        text: "[Validation] Error // 입력 오류 다이얼로그: 카드번호·유효기간 형식 오류",
+      },
+      {
+        time: 178.5,
+        type: "info",
+        text: "[UI] Fix // 수정하기 버튼 → 다이얼로그 닫기",
+      },
+      {
+        time: 183.5,
+        type: "warning",
+        text: "[Validation] Error // 입력 오류 다이얼로그: 전화번호·카드번호·유효기간 형식 오류",
+      },
+      {
+        time: 184.3,
+        type: "info",
+        text: "[UI] Fix // 수정하기 버튼 → 다이얼로그 닫기",
+      },
+      {
+        time: 190,
+        type: "success",
+        text: "[MyPage] Save // 마이페이지 저장 완료 (스낵바 표시)",
+      },
+
+      // ── 장바구니 담기 후 주문 ──
+      {
+        time: 196,
+        type: "info",
+        text: "[Nav] Book Detail // '백 년의 질문, 베스트셀러 필사노트' 도서 상세 진입",
+      },
+      {
+        time: 199.2,
+        type: "info",
+        text: "[UI] Order // 주문하기 버튼 클릭",
+      },
+      {
+        time: 202,
+        type: "info",
+        text: "[Nav] OrderHistory // 주문 내역 탭 이동",
+      },
+      {
+        time: 202.1,
+        type: "success",
+        text: "[UI] OrderHistory // 주문번호·날짜·도서목록·배송정보·결제수단 표시",
+      },
+      {
+        time: 204,
+        type: "info",
+        text: "[Riverpod] CartNotifier // 장바구니 담기 → 총 2권",
+      },
+      {
+        time: 206,
+        type: "info",
+        text: "[Nav] Cart // 장바구니 탭 이동",
+      },
+      {
+        time: 208,
+        type: "info",
+        text: "[UI] Order // 주문하기 버튼 클릭 → 주문 확인 다이얼로그",
+      },
+      {
+        time: 208.2,
+        type: "info",
+        text: "[UI] Order Dialog // 배송·결제 정보 표시 (Lee·010-0000-0000, 경기 성남시 분당구, 신용카드)",
+      },
+      {
+        time: 210,
+        type: "success",
+        text: "[Riverpod] OrderNotifier // 주문 완료 → 장바구니 초기화",
+      },
+
+      // ── 주문 내역 ──
+      {
+        time: 211,
+        type: "info",
+        text: "[Nav] OrderHistory // 주문 내역 탭 이동",
+      },
+      {
+        time: 211.1,
+        type: "success",
+        text: "[UI] OrderHistory // 주문번호·날짜·도서목록·배송정보·결제수단 표시",
+      },
+
+      // ── 로그아웃 ──
+      {
+        time: 216,
+        type: "info",
+        text: "[Auth] SignOut // 로그아웃 → 로그인 페이지로 복귀",
+      },
+      {
+        time: 218,
+        type: "info",
+        text: "I/App: Session End // --- 영상 종료 ---",
+      },
+    ],
+    webLogs: [
+      // ── 로그인 ──
+      {
+        time: 0,
+        type: "info",
+        text: "[Web] Launch // Flutter Web 실행 (Firebase Hosting)",
+      },
+      {
+        time: 0,
+        type: "warning",
+        text: "[Auth] Check Session // 회원가입 페이지 표시",
+      },
+      {
+        time: 8,
+        type: "warning",
+        text: "[Auth] Check Account // 이미 가입된 계정 → 에러 메시지 표시",
+      },
+      {
+        time: 11.5,
+        type: "success",
+        text: "[Auth] SignIn // 로그인 완료 → 홈 화면 진입",
+      },
+      {
+        time: 12,
+        type: "success",
+        text: "[API] Kakao Books // 베스트셀러 데이터 로드, 반응형 웹 레이아웃 렌더링",
+      },
+      {
+        time: 14.8,
+        type: "info",
+        text: "[Auth] SignOut // 로그아웃 → 로그인 페이지 이동",
+      },
+      {
+        time: 29.5,
+        type: "info",
+        text: "[Auth] Validation // 등록되지 않은 이메일 또는 비밀번호 → 오류 메시지 표시",
+      },
+      {
+        time: 32.7,
+        type: "success",
+        text: "[Auth] SignIn // 로그인 완료 → 홈 화면 진입",
+      },
+
+      // ── 홈 탐색 ──
+      {
+        time: 42,
+        type: "info",
+        text: "[UI] Category // '소설' 탭 클릭 → 소설 도서 목록 로드",
+      },
+      {
+        time: 44,
+        type: "info",
+        text: "[UI] Category // '경제/경영' 탭 클릭 → 경제/경영 도서 로드",
+      },
+
+      // ── 검색 ──
+      {
+        time: 51.3,
+        type: "info",
+        text: "[Search] Input // 검색어 입력",
+      },
+      {
+        time: 51.5,
+        type: "success",
+        text: "[Search] Result // 검색 결과 로드 완료",
+      },
+
+      // ── 도서 상세 (웹 좌우 레이아웃) ──
+      {
+        time: 54.3,
+        type: "info",
+        text: "[Nav] Book Detail // 도서 상세 페이지 진입",
+      },
+      { time: 58.5, type: "info", text: "[UI] Wishlist // 찜 버튼 클릭" },
+      {
+        time: 60,
+        type: "info",
+        text: "[Riverpod] CartNotifier // 장바구니 담기",
+      },
+      {
+        time: 62.5,
+        type: "info",
+        text: "[UI] Direct Order // 바로 구매 버튼 클릭 → 주문 확인 다이얼로그",
+      },
+      {
+        time: 62.5,
+        type: "warning",
+        text: "[UI] Order Dialog // 배송 정보 미입력 → 주문하기 버튼 비활성화 안내",
+      },
+      {
+        time: 65,
+        type: "info",
+        text: "[UI] Order Dialog // 취소 → 다이얼로그 닫기",
+      },
+      { time: 68, type: "info", text: "[UI] Wishlist // 찜 버튼 클릭" },
+      { time: 72, type: "info", text: "[UI] Wishlist // 찜 버튼 클릭" },
+
+
+      // 찜 목록 탭
+      {
+        time: 76,
+        type: "info",
+        text: "[Nav] Wishlist // 찜 목록 탭 이동 → 찜 목록 표시",
+      },
+
+      // ── 마이페이지 (웹) ──
+      {
+        time: 90.5,
+        type: "info",
+        text: "[Nav] MyPage // 상단 마이페이지 탭 이동",
+      },
+      {
+        time: 101.5,
+        type: "warning",
+        text: "[Validation] Error // 입력 오류 다이얼로그: 전화번호·카드번호·유효기간 형식 오류",
+      },
+      {
+        time: 102.5,
+        type: "info",
+        text: "[UI] Fix // 수정하기 버튼 → 다이얼로그 닫기",
+      },
+      {
+        time: 110,
+        type: "info",
+        text: "[UI] Address // 웹 환경 직접 주소 입력",
+      },
+      {
+        time: 125.5,
+        type: "success",
+        text: "[MyPage] Save // 마이페이지 저장 완료",
+      },
+
+       // ── 장바구니 담기 후 주문 ──
+      {
+        time: 129.5,
+        type: "info",
+        text: "[Nav] Book Detail // '백 년의 질문, 베스트셀러 필사노트' 도서 상세 진입",
+      },
+      {
+        time: 133,
+        type: "info",
+        text: "[UI] Order // 주문하기 버튼 클릭",
+      },
+      {
+        time: 138,
+        type: "info",
+        text: "[Nav] Cart // 장바구니 탭 이동",
+      },
+      {
+        time: 138.5,
+        type: "info",
+        text: "[UI] Order // 주문하기 버튼 클릭 → 주문 확인 다이얼로그",
+      },
+      {
+        time: 138.5,
+        type: "info",
+        text: "[UI] Order Dialog // 배송·결제 정보 표시",
+      },
+      {
+        time: 139.5,
+        type: "success",
+        text: "[Riverpod] OrderNotifier // 주문 완료 → 장바구니 초기화",
+      },
+
+      // ── 주문 내역 ──
+      {
+        time: 140,
+        type: "info",
+        text: "[Nav] OrderHistory // 주문 내역 탭 이동",
+      },
+      {
+        time: 140.1,
+        type: "success",
+        text: "[UI] OrderHistory // 주문번호·날짜·도서목록·배송정보·결제수단 표시",
+      },
+
+
+      // ── 로그아웃 ──
+      {
+        time: 146.6,
+        type: "info",
+        text: "[Auth] Logout // 상단 로그아웃 버튼 클릭",
+      },
+      {
+        time: 146.7,
+        type: "success",
+        text: "[Auth] SignOut // 세션 초기화 → 로그인 페이지 복귀",
+      },
+      {
+        time: 149,
+        type: "info",
+        text: "I/Web: Session End // --- 웹 세션 종료 ---",
+      },
+    ],
+  },
 ];
 
 export default function Home() {
@@ -1099,11 +1600,12 @@ export default function Home() {
 
   // ★ 추가 2: 필터링 로직
   const filteredProjects = PROJECTS.filter((project) => {
-  if (activeFilter === "All") return true;
-  if (activeFilter === "Android") return project.type === "android";
-  if (activeFilter === "React") return project.type === "react" || project.type === "sync";
-  return true;
-});
+    if (activeFilter === "All") return true;
+    if (activeFilter === "Android") return project.type === "android";
+    if (activeFilter === "React")
+      return project.type === "react" || project.type === "sync";
+    return true;
+  });
 
   const featuredProjects = filteredProjects.filter((p) => p.featured);
   const normalProjects = filteredProjects.filter((p) => !p.featured);
