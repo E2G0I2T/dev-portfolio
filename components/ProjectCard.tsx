@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Play, Pause, RefreshCw, Smartphone, Monitor } from "lucide-react";
+import {
+  Play,
+  Pause,
+  RefreshCw,
+  Smartphone,
+  Monitor,
+  Github,
+} from "lucide-react";
 
 export type LogEntry = {
   time: number;
@@ -18,7 +25,8 @@ interface ProjectCardProps {
   webVideoSrc?: string;
   logs: LogEntry[];
   webLogs?: LogEntry[];
-  projectType: "android" | "react" | "sync"; // ← sync 추가
+  projectType: "android" | "react" | "sync" | "flutter";
+  githubUrl?: string | { label: string; url: string }[];
 }
 
 const formatLogTime = (seconds: number) => {
@@ -37,11 +45,12 @@ export default function ProjectCard({
   logs,
   webLogs,
   projectType,
+  githubUrl,
 }: ProjectCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isUserScrolling = useRef(false);
 
-  // sync 타입은 항상 web 모드로 시작
   const [viewMode, setViewMode] = useState<"mobile" | "web">(
     projectType === "sync" ? "web" : videoSrc ? "mobile" : "web",
   );
@@ -49,7 +58,8 @@ export default function ProjectCard({
   const [currentLogs, setCurrentLogs] = useState<LogEntry[]>([]);
 
   const hasBothVideos = Boolean(videoSrc && webVideoSrc);
-  const currentVideoUrl = viewMode === "mobile" ? videoSrc : webVideoSrc ?? videoSrc;
+  const currentVideoUrl =
+    viewMode === "mobile" ? videoSrc : (webVideoSrc ?? videoSrc);
 
   const targetLogs = viewMode === "web" && webLogs ? webLogs : logs;
 
@@ -62,7 +72,7 @@ export default function ProjectCard({
   };
 
   useEffect(() => {
-    if (scrollRef.current) {
+    if (!isUserScrolling.current && scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [currentLogs]);
@@ -93,7 +103,6 @@ export default function ProjectCard({
     }
   };
 
-  // 텍스트 정보 블록
   const TextContent = (
     <div className="shrink-0 w-full animate-in fade-in duration-500">
       <div className="flex items-center gap-2 font-mono text-xs text-gray-500 mb-3">
@@ -110,6 +119,10 @@ export default function ProjectCard({
           <span className="text-emerald-400 bg-emerald-900/20 px-2 py-1 rounded border border-emerald-500/20 font-bold">
             ANDROID NATIVE
           </span>
+        ) : projectType === "flutter" ? (
+          <span className="text-blue-400 bg-blue-900/20 px-2 py-1 rounded border border-blue-500/20 font-bold">
+            FLUTTER
+          </span>
         ) : (
           <span className="text-cyan-400 bg-cyan-900/20 px-2 py-1 rounded border border-cyan-500/20 font-bold">
             REACT NATIVE
@@ -120,7 +133,8 @@ export default function ProjectCard({
       <h3 className="text-4xl sm:text-5xl font-bold text-slate-100 mb-5 tracking-tight break-keep">
         {title}
       </h3>
-      <div className="flex flex-wrap gap-2 mb-6">
+
+      <div className="flex flex-wrap gap-2 mb-4">
         {tags.map((tag) => (
           <span
             key={tag}
@@ -130,6 +144,38 @@ export default function ProjectCard({
           </span>
         ))}
       </div>
+
+      {githubUrl && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          {typeof githubUrl === "string" ? (
+            <a
+              href={githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-600 hover:border-slate-400 rounded-lg transition-all"
+            >
+              <Github size={16} />
+              View on GitHub
+            </a>
+          ) : (
+            githubUrl.map((repo) => (
+              <a
+                key={repo.label}
+                href={repo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-600 hover:border-slate-400 rounded-lg transition-all"
+              >
+                <Github size={16} />
+                {repo.label}
+              </a>
+            ))
+          )}
+        </div>
+      )}
+
       <div className="space-y-4 mb-4">
         <p className="text-slate-200 text-lg font-medium leading-relaxed break-keep">
           {summary}
@@ -149,7 +195,6 @@ export default function ProjectCard({
     </div>
   );
 
-  // 디버그 콘솔 블록
   const ConsoleContent = (
     <div className="w-full h-full bg-slate-950 rounded-xl border border-slate-800 shadow-inner overflow-hidden flex flex-col min-h-[400px]">
       <div className="flex justify-between items-center px-4 py-3 bg-slate-900/50 border-b border-slate-800 shrink-0">
@@ -165,7 +210,13 @@ export default function ProjectCard({
       </div>
       <div
         ref={scrollRef}
-        className="flex-1 w-full p-4 overflow-y-auto font-mono text-xs sm:text-sm space-y-2 bg-slate-950/50 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-slate-800 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-700"
+        onScroll={() => {
+          if (!scrollRef.current) return;
+          const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+          isUserScrolling.current =
+            scrollHeight - scrollTop - clientHeight > 30;
+        }}
+        className="flex-1 w-full p-4 overflow-y-auto font-mono text-xs sm:text-sm space-y-2 bg-slate-950/50 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-slate-800 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-700"
       >
         {currentLogs.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-slate-700 italic space-y-2">
@@ -207,7 +258,6 @@ export default function ProjectCard({
     </div>
   );
 
-  // ── 웹 브라우저 프레임 (sync 타입 + web 모드 공통 사용) ────────────────
   const WebFrame = (
     <div className="w-full aspect-video relative border-gray-700 bg-gray-900 border rounded-xl shadow-2xl overflow-hidden flex flex-col">
       <div className="h-10 bg-slate-800 border-b border-slate-700 flex items-center px-4 gap-2 shrink-0">
@@ -249,7 +299,6 @@ export default function ProjectCard({
     </div>
   );
 
-  // ── 재생 컨트롤 ────────────────────────────────────────────────────────
   const Controls = (
     <div className="flex justify-center gap-4">
       <button
@@ -269,7 +318,6 @@ export default function ProjectCard({
 
   return (
     <div className="w-full">
-      {/* 탭 토글 — sync 타입은 숨김 */}
       {hasBothVideos && projectType !== "sync" && (
         <div className="flex justify-center mb-10">
           <div className="flex bg-slate-900/80 backdrop-blur rounded-full p-1.5 border border-slate-700 shadow-xl">
@@ -297,7 +345,6 @@ export default function ProjectCard({
         </div>
       )}
 
-      {/* ── sync 타입 레이아웃 ── */}
       {projectType === "sync" ? (
         <div className="w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-10 lg:gap-16 items-start">
           <div className="flex flex-col gap-6 w-full">
@@ -311,9 +358,7 @@ export default function ProjectCard({
             {ConsoleContent}
           </div>
         </div>
-
       ) : viewMode === "mobile" ? (
-        /* ── 기존 mobile 레이아웃 ── */
         <div className="w-full grid grid-cols-1 lg:grid-cols-[380px_minmax(0,1fr)] gap-10 lg:gap-16 items-start">
           <div className="relative w-full mx-auto flex flex-col items-center">
             <div className="relative border-gray-800 bg-gray-900 border-[12px] rounded-[3rem] h-[660px] w-[340px] shadow-2xl overflow-hidden ring-1 ring-slate-700/50">
@@ -362,14 +407,10 @@ export default function ProjectCard({
           </div>
           <div className="flex flex-col h-full lg:min-h-[660px]">
             {TextContent}
-            <div className="mt-6 flex-1 h-full min-h-[300px]">
-              {ConsoleContent}
-            </div>
+            <div className="mt-6 h-[400px] lg:h-[200px]">{ConsoleContent}</div>
           </div>
         </div>
-
       ) : (
-        /* ── 기존 web 레이아웃 ── */
         <div className="w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-10 lg:gap-16 items-start">
           <div className="flex flex-col gap-8 w-full">
             {WebFrame}
