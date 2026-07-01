@@ -1530,4 +1530,331 @@ export const PROJECTS: ProjectData[] = [
       },
     ],
   },
+  {
+    id: 8,
+    type: "flutter",
+    filename: "tripsage.dart",
+    title: "TripSage - AI 여행 플래너",
+    githubUrl: "https://github.com/E2G0I2T/trip_sage",
+    tags: [
+      "Flutter",
+      "Dart",
+      "Firebase",
+      "Cloud Functions",
+      "Gemini API",
+      "Google Maps",
+      "Riverpod",
+      "GoRouter",
+    ],
+    videoSrc: "/videos/demo9.mp4",
+    webVideoSrc: "/videos/demo10.mp4",
+    summary:
+      "Gemini 2.5 Flash로 여행 일정을 자동 생성하고, 대화형 채팅으로 일정을 수정할 수 있는 AI 여행 플래너 앱입니다. Flutter 단일 코드베이스로 Android와 Web을 동시 지원합니다.",
+    featured: true,
+    specs: [
+      "Cloud Functions(2nd gen) + Gemini 2.5 Flash로 출발지·목적지·예산·이동수단을 반영한 구조화된 JSON 일정 자동 생성, 재시도 로직으로 일시적 API 오류 대응",
+      "대화형 채팅 UI로 자연어 일정 수정 요청 처리, 수정 즉시 Firestore에 자동 저장되는 끊김 없는 편집 경험 구현",
+      "Google Maps Geocoding을 Cloud Function 프록시로 호출해 장소를 일괄 좌표 변환, 카테고리별 색상과 순번을 입힌 커스텀 마커와 동선 폴리라인으로 시각화",
+      "Riverpod 기반 상태 관리와 named Firestore database로 사용자별 여행 목록 CRUD(저장/조회/스와이프 삭제) 및 fl_chart 기반 카테고리·일별 예산 분석 대시보드 구현",
+    ],
+    logs: [
+      {
+        time: 0,
+        type: "info",
+        text: "[App] Launch // Flutter 앱 실행, Firebase 익명 인증",
+      },
+      {
+        time: 0.1,
+        type: "success",
+        text: "[Auth] SignIn // Firebase Auth 익명 로그인 완료",
+      },
+      {
+        time: 1,
+        type: "info",
+        text: "[Nav] New Trip // 홈 화면에서 '새 여행' 버튼 클릭",
+      },
+      {
+        time: 8.7,
+        type: "info",
+        text: "[UI] DatePicker // 여행 날짜 범위 선택 모달 오픈",
+      },
+      {
+        time: 11.6,
+        type: "success",
+        text: "[UI] Set Range // 날짜 범위 선택 완료 (2026.06.29~07.04, 6일)",
+      },
+      {
+        time: 17.5,
+        type: "info",
+        text: "[UI] Submit // 'AI 일정 만들기' 버튼 클릭",
+      },
+      {
+        time: 17.6,
+        type: "info",
+        text: "[Functions] Call generateItinerary // Cloud Functions 호출 (asia-northeast3)",
+      },
+      {
+        time: 17.7,
+        type: "info",
+        text: "[Gemini] Request // gemini-2.5-flash 일정 생성 프롬프트 전송",
+      },
+      {
+        time: 25.5,
+        type: "success",
+        text: "[Gemini] Response // 구조화된 JSON 일정 스키마 수신 (6일치)",
+      },
+      {
+        time: 25.6,
+        type: "success",
+        text: "[Nav] Push Result // '홍콩 일정' 결과 화면, 타임라인 카드 렌더링",
+      },
+      {
+        time: 38,
+        type: "info",
+        text: "[Nav] Open Chat // 일정 수정 채팅 바텀시트 오픈",
+      },
+      {
+        time: 54,
+        type: "info",
+        text: '[UI] Input // 채팅 입력: "1일차 호텔 체크인 전에 점심식사 넣어줘"',
+      },
+      {
+        time: 54.5,
+        type: "info",
+        text: "[Functions] Call editItinerary // 일정 수정 요청 전송",
+      },
+      {
+        time: 55,
+        type: "info",
+        text: "[Gemini] Edit Request // 기존 일정 JSON + 사용자 요청 프롬프트 전송",
+      },
+      {
+        time: 56.5,
+        type: "success",
+        text: "[Gemini] Edit Response // 수정된 일정 JSON 수신",
+      },
+      {
+        time: 56.6,
+        type: "success",
+        text: "[Firestore] Auto Save // 수정된 일정 자동 저장 완료",
+      },
+      {
+        time: 56.7,
+        type: "info",
+        text: "[UI] Snackbar // '일정이 자동 저장됐어요' 토스트 표시",
+      },
+      {
+        time: 63.5,
+        type: "info",
+        text: "[Nav] Push Map // 지도 화면 진입",
+      },
+      {
+        time: 66.5,
+        type: "info",
+        text: "[Maps] Geocode Batch // geocodePlaces 호출, 1일차 장소 일괄 좌표 변환",
+      },
+      {
+        time: 66.6,
+        type: "success",
+        text: "[Maps] Render Markers // 카테고리별 색상 + 순번 마커 렌더링",
+      },
+      {
+        time: 74.3,
+        type: "info",
+        text: "[UI] Tab: Day2 // 지도 일차 탭 전환 (1일차 → 2일차)",
+      },
+      {
+        time: 81.6,
+        type: "info",
+        text: "[Nav] Push Budget // 예산 분석 화면 진입",
+      },
+      {
+        time: 81.7,
+        type: "success",
+        text: "[UI] Render Chart // 카테고리별 지출 도넛 차트 렌더링",
+      },
+      {
+        time: 81.8,
+        type: "success",
+        text: "[UI] Render Chart // 일별 예상 지출 막대 그래프 렌더링",
+      },
+      {
+        time: 87.4,
+        type: "info",
+        text: "[Nav] Pop to Home // 홈 화면으로 복귀",
+      },
+      {
+        time: 87.5,
+        type: "success",
+        text: "[Firestore] Fetch Trips // 저장된 여행 목록 자동 새로고침",
+      },
+      {
+        time: 91.5,
+        type: "warning",
+        text: "[UI] Swipe // 여행 카드 좌측 스와이프 → 삭제 확인 다이얼로그",
+      },
+      {
+        time: 93,
+        type: "success",
+        text: "[Firestore] Delete Trip // 삭제 확정 → Firestore 문서 삭제",
+      },
+      {
+        time: 93.3,
+        type: "info",
+        text: "[UI] Snackbar // '여행이 삭제됐어요' 토스트 표시",
+      },
+      {
+        time: 95,
+        type: "info",
+        text: "I/App: Session End // --- 영상 종료 ---",
+      },
+    ],
+    webLogs: [
+      {
+        time: 0,
+        type: "info",
+        text: "[Web] Launch // Flutter Web 실행 (Firebase Hosting)",
+      },
+      {
+        time: 0.1,
+        type: "success",
+        text: "[Auth] SignIn // Firebase Auth 익명 로그인 완료",
+      },
+      {
+        time: 1,
+        type: "info",
+        text: "[Nav] New Trip // 홈에서 '새 여행' 버튼 클릭",
+      },
+      {
+        time: 5.1,
+        type: "info",
+        text: "[UI] DatePicker // 여행 날짜 범위 선택 모달 오픈",
+      },
+      {
+        time: 9.5,
+        type: "success",
+        text: "[UI] Set Range // 날짜 범위 선택 완료 (2026.06.28~07.03, 6일)",
+      },
+      {
+        time: 14,
+        type: "info",
+        text: "[UI] Submit // 'AI 일정 만들기' 클릭",
+      },
+      {
+        time: 14.1,
+        type: "info",
+        text: "[Functions] Call generateItinerary // Cloud Functions 호출",
+      },
+      {
+        time: 14.2,
+        type: "info",
+        text: "[Gemini] Request // gemini-2.5-flash 일정 생성 요청",
+      },
+      {
+        time: 17.7,
+        type: "success",
+        text: "[Gemini] Response // 구조화된 JSON 일정 수신 (6일치)",
+      },
+      {
+        time: 17.8,
+        type: "success",
+        text: "[Nav] Push Result // '도쿄 일정' 결과 화면 렌더링",
+      },
+      {
+        time: 28.6,
+        type: "info",
+        text: "[Nav] Open Chat // 일정 수정 채팅 모달 오픈",
+      },
+      {
+        time: 50.4,
+        type: "info",
+        text: '[UI] Input // 채팅 입력: "인천·나리타 대신 김포·하네다 공항 루트로 변경해줘"',
+      },
+      {
+        time: 50.5,
+        type: "info",
+        text: "[Functions] Call editItinerary // 일정 수정 요청 전송",
+      },
+      {
+        time: 53.3,
+        type: "success",
+        text: "[Gemini] Edit Response // 수정된 일정 수신",
+      },
+      {
+        time: 53.4,
+        type: "success",
+        text: "[Firestore] Auto Save // 수정 결과 자동 저장",
+      },
+      {
+        time: 53.5,
+        type: "info",
+        text: "[UI] Snackbar // '일정이 자동 저장됐어요' 표시",
+      },
+      {
+        time: 60.3,
+        type: "info",
+        text: "[Nav] Push Map // 지도 화면 진입",
+      },
+      {
+        time: 60.4,
+        type: "info",
+        text: "[Maps] Geocode Batch // 1일차 장소 일괄 좌표 변환 요청",
+      },
+      {
+        time: 63,
+        type: "success",
+        text: "[Maps] Render Markers // 순번 + 카테고리 색상 마커 렌더링",
+      },
+      {
+        time: 80,
+        type: "info",
+        text: "[UI] Tab: Day2 // 지도 일차 탭 전환 (1일차 → 2일차)",
+      },
+      {
+        time: 87,
+        type: "info",
+        text: "[Nav] Push Budget // 예산 분석 화면 진입",
+      },
+      {
+        time: 87.1,
+        type: "success",
+        text: "[UI] Render Chart // 카테고리별 지출 도넛 차트 렌더링",
+      },
+      {
+        time: 87.2,
+        type: "success",
+        text: "[UI] Render Chart // 일별 예상 지출 막대 그래프 렌더링",
+      },
+      {
+        time: 95.8,
+        type: "info",
+        text: "[Nav] Pop to Home // 홈 화면 복귀",
+      },
+      {
+        time: 95.9,
+        type: "success",
+        text: "[Firestore] Fetch Trips // 저장된 여행 목록 새로고침",
+      },
+      {
+        time: 105.8,
+        type: "warning",
+        text: "[UI] Drag // 여행 카드 좌측 스와이프 → 삭제 확인 다이얼로그",
+      },
+      {
+        time: 108.2,
+        type: "success",
+        text: "[Firestore] Delete Trip // 삭제 확정 → Firestore 문서 삭제",
+      },
+      {
+        time: 108.4,
+        type: "info",
+        text: "[UI] Snackbar // '여행이 삭제됐어요' 표시",
+      },
+      {
+        time: 111,
+        type: "info",
+        text: "I/Web: Session End // --- 웹 세션 종료 ---",
+      },
+    ],
+  },
 ];
